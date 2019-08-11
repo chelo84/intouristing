@@ -21,6 +21,10 @@ public class UserDTO {
 
     private Long id;
 
+    private String name;
+
+    private String lastName;
+
     private String username;
 
     @JsonIgnore
@@ -37,6 +41,8 @@ public class UserDTO {
             return UserDTO
                     .builder()
                     .id(user.getId())
+                    .name(user.getName())
+                    .lastName(user.getLastName())
                     .username(user.getUsername())
                     .password(user.getPassword())
                     .userPosition(UserPositionDTO.parseDTO(user.getUserPosition()))

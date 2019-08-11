@@ -21,6 +21,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
+
+    private String lastName;
+
     private String username;
 
     private String password;
@@ -29,6 +33,8 @@ public class User {
 
     private String email;
 
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] avatarImage;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

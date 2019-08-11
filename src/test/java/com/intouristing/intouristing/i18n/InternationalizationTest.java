@@ -38,7 +38,6 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = Application.class)
 public class InternationalizationTest {
 
-
     private final String ptBr = "pt-BR",
             enUs = "en-US";
     @Autowired
@@ -70,7 +69,7 @@ public class InternationalizationTest {
      */
     private <T> T constructException(Class<T> exceptionClass, Class<?>[] constructorClasses, Serializable[] constructorParams) throws Exception {
         if (nonNull(constructorClasses) && nonNull(constructorParams)) {
-            return exceptionClass.getDeclaredConstructor(constructorClasses).newInstance(constructorParams);
+            return exceptionClass.getDeclaredConstructor(constructorClasses).newInstance((Object[]) constructorParams);
         }
 
         return exceptionClass.getDeclaredConstructor().newInstance();
