@@ -3,10 +3,10 @@ package com.intouristing.intouristing.exceptions;
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
  */
-public class TokenExpiredException extends Exception {
+public class TokenExpiredException extends RootException {
 
     public TokenExpiredException() {
-        super("Token is expired");
+        super("token.expired");
     }
 
 }

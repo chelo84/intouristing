@@ -14,16 +14,15 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class UserService {
+public class UserService extends RootService {
 
-    private final
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User find(Long id) throws NotFoundException {
+    public User find(Long id) throws Exception {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(User.class, id));
     }
@@ -43,4 +42,5 @@ public class UserService {
 
         return user;
     }
+
 }

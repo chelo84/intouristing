@@ -1,7 +1,13 @@
 package com.intouristing.intouristing.controller.handler;
 
+import com.intouristing.intouristing.exceptions.RootException;
 import com.intouristing.intouristing.model.dto.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,6 +25,14 @@ import java.time.LocalDateTime;
 @RestController
 public class ApiValidatorExceptionHandler {
 
+    private static final String UNEXPECTED_ERROR = "Exception.unexpected";
+
+    private final MessageSource messageSource;
+
+    public ApiValidatorExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         ErrorDTO errorDetails = buildErrorDetails(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -28,10 +42,26 @@ public class ApiValidatorExceptionHandler {
 
     private ErrorDTO buildErrorDetails(Exception ex, WebRequest request, HttpStatus httpStatus) {
         log.error(ex.getMessage(), ex);
+        String message = getMessage(ex);
         return new ErrorDTO(LocalDateTime.now(),
                 httpStatus.value(),
                 httpStatus.getReasonPhrase(),
-                ex.getMessage(),
+                message,
                 request.getContextPath());
+    }
+
+    private String getMessage(Exception ex) {
+        String message;
+        try {
+            RootException rootEx = (RootException) ex;
+            if (ArrayUtils.isNotEmpty(rootEx.getParams())) {
+                message = messageSource.getMessage(ex.getMessage(), rootEx.getParams(), LocaleContextHolder.getLocale());
+            } else {
+                message = messageSource.getMessage(new DefaultMessageSourceResolvable(rootEx.getMessage()), LocaleContextHolder.getLocale());
+            }
+        } catch (NoSuchMessageException | ClassCastException e) {
+            message = messageSource.getMessage(new DefaultMessageSourceResolvable(UNEXPECTED_ERROR), LocaleContextHolder.getLocale());
+        }
+        return message;
     }
 }

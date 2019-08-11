@@ -1,7 +1,6 @@
 package com.intouristing.intouristing.service;
 
 import com.intouristing.intouristing.Application;
-import com.intouristing.intouristing.exceptions.NotFoundException;
 import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.model.dto.UserPositionDTO;
 import com.intouristing.intouristing.model.entity.User;
@@ -26,16 +25,16 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
 
-    private UserDTO constructUserDTO() {
+    private UserDTO buildUserDTO() {
         return UserDTO
                 .builder()
                 .username("testUsername")
                 .password("testPassword")
-                .userPosition(constructUserPositionDTO())
+                .userPosition(buildUserPositionDTO())
                 .build();
     }
 
-    private UserPositionDTO constructUserPositionDTO() {
+    private UserPositionDTO buildUserPositionDTO() {
         return UserPositionDTO
                 .builder()
                 .accuracy(1.23456)
@@ -48,7 +47,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldCreateNewUser() {
-        UserDTO userDTO = constructUserDTO();
+        UserDTO userDTO = buildUserDTO();
         User user = userService.create(userDTO);
 
         assertNotNull(user.getId());
@@ -61,16 +60,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldFindUser() throws NotFoundException {
-        User user = userService.create(constructUserDTO());
+    public void shouldFindUser() throws Exception {
+        User user = userService.create(buildUserDTO());
         User foundUser = userService.find(user.getId());
 
         assertNotNull(foundUser);
         assertEquals(user, foundUser);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowNotFoundExceptionIfUserIsNotFound() throws NotFoundException {
-        userService.find(999999L);
-    }
 }

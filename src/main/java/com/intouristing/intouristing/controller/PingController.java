@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ping")
 public class PingController {
 
-
-    private final
-    PingService pingService;
+    private final PingService pingService;
 
     public PingController(PingService pingService) {
         this.pingService = pingService;

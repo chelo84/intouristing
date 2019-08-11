@@ -15,10 +15,9 @@ import java.util.Map;
  * Created by Marcelo Lacroix on 10/08/2019.
  */
 @Service
-public class PingService {
+public class PingService extends RootService {
 
-    private final
-    Environment environment;
+    private final Environment environment;
 
     public PingService(Environment environment) {
         this.environment = environment;
