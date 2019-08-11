@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class PingService {
 
-    final
+    private final
     Environment environment;
 
     public PingService(Environment environment) {

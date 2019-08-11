@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PingController {
 
 
-    final
+    private final
     PingService pingService;
 
     public PingController(PingService pingService) {
