@@ -15,13 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -103,8 +101,7 @@ public class UserServiceTest {
         );
         user = userService.setAvatarImage(user.getId(), mockMultipartFile);
 
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        userService.getAvatarImage(user.getId(), response);
+        userService.getAvatarImage(user.getId());
     }
 
 }

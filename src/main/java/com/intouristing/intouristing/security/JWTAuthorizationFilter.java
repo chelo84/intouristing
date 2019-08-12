@@ -2,7 +2,9 @@ package com.intouristing.intouristing.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.intouristing.intouristing.security.service.token.TokenService;
+import com.intouristing.intouristing.exceptions.NotFoundException;
+import com.intouristing.intouristing.model.entity.User;
+import com.intouristing.intouristing.model.repository.UserRepository;
 import com.intouristing.intouristing.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +34,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private AccountService accountService;
 
+    private UserRepository userRepository;
+
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
@@ -49,12 +53,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authenticationToken = this.getAuthentication(request);
 
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
         if (nonNull(authenticationToken)) {
-            log.info("Setting Account Info for user {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
             resolveAccountInfo(request);
         }
 
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }
 
@@ -77,8 +81,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private void resolveAccountInfo(HttpServletRequest request) {
         resolveAccountServiceBean(request);
-        Account account = TokenService.parseToken(request.getHeader(HEADER_STRING));
-        accountService.setAccount(account);
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if (isNull(userRepository)) {
+            ServletContext servletContext = request.getServletContext();
+            WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+            userRepository = webApplicationContext.getBean(UserRepository.class);
+        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException(User.class, username));
+        accountService.setUser(user);
     }
 
     private void resolveAccountServiceBean(HttpServletRequest request) {

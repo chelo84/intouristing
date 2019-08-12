@@ -59,7 +59,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-    public AccountService userService() {
+    public AccountService accountService() {
         return new AccountServiceImpl();
     }
 }

@@ -1,21 +1,21 @@
 package com.intouristing.intouristing.service;
 
-import com.intouristing.intouristing.security.Account;
+import com.intouristing.intouristing.model.entity.User;
 
 /**
  * Created by Marcelo Lacroix on 12/08/19.
  */
 public class AccountServiceImpl implements AccountService {
-    private Account account;
+    private User user;
 
     @Override
-    public void setAccount(final Account accountCredentials) {
-        this.account = accountCredentials;
+    public User getUser() {
+        return user;
     }
 
     @Override
-    public Account getAccount() {
-        return account;
+    public void setUser(final User user) {
+        this.user = user;
     }
 }
 
