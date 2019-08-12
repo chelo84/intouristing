@@ -25,12 +25,14 @@ public class User {
 
     private String lastName;
 
+    @Column(unique = true)
     private String username;
 
     private String password;
 
     private String token;
 
+    @Column(unique = true)
     private String email;
 
     @Lob

@@ -20,9 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 public class UserService extends RootService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User find(Long id) throws Exception {
@@ -41,8 +43,7 @@ public class UserService extends RootService {
                 .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
                 .build();
         user.getUserPosition().setUser(user);
-        String password = new BCryptPasswordEncoder().encode(userDTO.getPassword());
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
 
         return user;
