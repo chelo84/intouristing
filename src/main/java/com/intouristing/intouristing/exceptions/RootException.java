@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class RootException extends Exception {
+public class RootException extends RuntimeException {
 
     private String customMessage;
     private String[] params;

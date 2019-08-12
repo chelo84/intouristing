@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public void find(@PathVariable Long id) throws Exception {
+    public void find(@PathVariable Long id) {
         userService.find(id);
     }
 
@@ -48,10 +48,10 @@ public class UserController {
     }
 
     @GetMapping("/avatar/{id}")
-    public ResponseEntity<?> getAvatar(@PathVariable Long id, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> getAvatar(@PathVariable Long id, HttpServletResponse response) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION)
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(userService.getAvatarImage(id, response));
+                .body(userService.getAvatarImage(id));
     }
 }

@@ -13,7 +13,8 @@ import static java.util.Objects.nonNull;
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
  */
-@Data
+@Setter
+@Getter
 @EqualsAndHashCode(exclude = "user")
 @Builder
 @NoArgsConstructor

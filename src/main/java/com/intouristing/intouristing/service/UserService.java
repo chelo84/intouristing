@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -20,12 +20,16 @@ import javax.servlet.http.HttpServletResponse;
 public class UserService extends RootService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AccountService accountService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountService accountService) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.accountService = accountService;
     }
 
-    public User find(Long id) throws Exception {
+    public User find(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(User.class, id));
     }
@@ -41,21 +45,20 @@ public class UserService extends RootService {
                 .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
                 .build();
         user.getUserPosition().setUser(user);
-        String password = new BCryptPasswordEncoder().encode(userDTO.getPassword());
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
 
         return user;
     }
 
-    public User setAvatarImage(Long id, MultipartFile multipartFile) throws Exception {
+    public User setAvatarImage(Long id, MultipartFile multipartFile) throws IOException {
         User user = this.find(id);
         byte[] avatarImage = multipartFile.getBytes();
         user.setAvatarImage(avatarImage);
         return userRepository.save(user);
     }
 
-    public byte[] getAvatarImage(Long id, HttpServletResponse response) throws Exception {
+    public byte[] getAvatarImage(Long id) {
         return userRepository.findById(id).map(User::getAvatarImage).orElse(null);
     }
 }
