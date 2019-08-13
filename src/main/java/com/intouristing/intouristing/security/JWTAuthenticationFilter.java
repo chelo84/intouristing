@@ -3,6 +3,7 @@ package com.intouristing.intouristing.security;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.model.entity.User;
+import com.intouristing.intouristing.model.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,8 @@ import static com.intouristing.intouristing.security.SecurityConstants.*;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
+
+    private UserRepository userRepository;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -55,9 +58,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain filterChain,
                                             Authentication authentication) throws IOException, ServletException {
+        User user = userRepository.findByUsername(((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername()).get();
         String token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .withClaim("id", user.getId())
+                .withClaim("name", user.getName())
+                .withClaim("lastname", user.getLastName())
+                .withClaim("username", user.getUsername())
+                .withClaim("email", user.getEmail())
                 .sign(HMAC512(SECRET.getBytes()));
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
     }

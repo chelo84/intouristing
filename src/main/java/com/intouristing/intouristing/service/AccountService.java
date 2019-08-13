@@ -1,14 +1,14 @@
 package com.intouristing.intouristing.service;
 
-import com.intouristing.intouristing.model.entity.User;
+import com.intouristing.intouristing.security.Account;
 
 /**
  * Created by Marcelo Lacroix on 12/08/19.
  */
 public interface AccountService {
 
-    User getUser();
+    Account getAccount();
 
-    void setUser(User user);
+    void setAccount(Account account);
 
 }
