@@ -11,12 +11,12 @@ import java.util.AbstractMap;
 import java.util.Date;
 import java.util.Map;
 
+import static com.intouristing.intouristing.security.SecurityConstants.TOKEN_PREFIX;
+
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
  */
 public class TokenService {
-
-    final static private String TOKEN_PREFIX = "BEARER";
 
     private static AbstractMap.SimpleEntry<String, String> claimsToMap(Map.Entry<String, Claim> claim) {
         return new AbstractMap.SimpleEntry<>(claim.getKey(), claim.getValue().asString());
@@ -39,8 +39,7 @@ public class TokenService {
     private static DecodedJWT decodeToken(String token) {
         token = token.replace(TOKEN_PREFIX, "");
 
-        DecodedJWT jwt;
-        jwt = JWT.decode(token);
+        DecodedJWT jwt = JWT.decode(token);
 
         return jwt;
     }

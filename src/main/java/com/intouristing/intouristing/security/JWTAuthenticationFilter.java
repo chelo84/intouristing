@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.model.entity.User;
 import com.intouristing.intouristing.model.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,8 +31,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private UserRepository userRepository;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    @Autowired
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .withClaim("id", user.getId())
                 .withClaim("name", user.getName())
-                .withClaim("lastname", user.getLastName())
+                .withClaim("lastName", user.getLastName())
                 .withClaim("username", user.getUsername())
                 .withClaim("email", user.getEmail())
                 .sign(HMAC512(SECRET.getBytes()));

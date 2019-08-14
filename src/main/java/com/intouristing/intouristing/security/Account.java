@@ -30,10 +30,10 @@ public class Account {
         return Account
                 .builder()
                 .id(Optional.ofNullable(claims.get("id")).map(Claim::asLong).orElse(null))
-                .name(Optional.ofNullable(claims.get("name")).map(Claim::asString).orElse(null))
-                .lastName(Optional.ofNullable(claims.get("lastName")).map(Claim::asString).orElse(null))
+                .name(Optional.ofNullable(claims.get("name")).map(Claim::asString).orElse(""))
+                .lastName(Optional.ofNullable(claims.get("lastName")).map(Claim::asString).orElse(""))
                 .username(Optional.ofNullable(claims.get("username")).map(Claim::asString).orElse(null))
-                .email(Optional.ofNullable(claims.get("email")).map(Claim::asString).orElse(null))
+                .email(Optional.ofNullable(claims.get("email")).map(Claim::asString).orElse(""))
                 .build();
     }
 }

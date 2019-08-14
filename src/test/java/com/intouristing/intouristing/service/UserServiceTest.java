@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,7 @@ import static org.junit.Assert.*;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class UserServiceTest {
 
     @Autowired
@@ -38,6 +40,9 @@ public class UserServiceTest {
                 .username("testUsername")
                 .password("testPassword")
                 .userPosition(buildUserPositionDTO())
+                .email("test_email@hotmail.com")
+                .name("nameTest")
+                .lastName("nameLastname")
                 .build();
     }
 
@@ -59,7 +64,6 @@ public class UserServiceTest {
 
         assertNotNull(user.getId());
         assertTrue(new BCryptPasswordEncoder().matches(userDTO.getPassword(), user.getPassword()));
-        assertEquals(userDTO.getToken(), user.getToken());
         assertEquals(userDTO.getUsername(), user.getUsername());
 
         assertNotNull(user.getUserPosition());

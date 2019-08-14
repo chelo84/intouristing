@@ -5,7 +5,7 @@ package com.intouristing.intouristing.security;
  */
 public class SecurityConstants {
 
-    public static final String SECRET = "SecretKeyToGenJWTs";
+    public static final String SECRET = "lmgyIYoMcoPzBtLvXASe0aeIdJjwzvk6fkdu9KmH5emkpUJC3sk56DZFutTc0Nh";
 
     public static final long EXPIRATION_TIME = 864_000_000; // 10 days
 

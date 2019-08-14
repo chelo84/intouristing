@@ -25,11 +25,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/token")
-    public String createToken(@RequestBody UserDTO userDTO) {
-        return null;
-    }
-
     @GetMapping("/{id}")
     public void find(@PathVariable Long id) {
         userService.find(id);

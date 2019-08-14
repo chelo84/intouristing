@@ -32,8 +32,6 @@ public class UserDTO {
 
     private UserPositionDTO userPosition;
 
-    private String token;
-
     private String email;
 
     public static UserDTO parseDTO(User user) {
@@ -46,7 +44,6 @@ public class UserDTO {
                     .username(user.getUsername())
                     .password(user.getPassword())
                     .userPosition(UserPositionDTO.parseDTO(user.getUserPosition()))
-                    .token(user.getToken())
                     .email(user.getEmail())
                     .build();
         }
