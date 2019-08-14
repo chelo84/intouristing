@@ -2,9 +2,7 @@ package com.intouristing.intouristing.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.intouristing.intouristing.exceptions.NotFoundException;
-import com.intouristing.intouristing.model.entity.User;
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.security.token.TokenService;
 import com.intouristing.intouristing.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,8 +31,6 @@ import static java.util.Objects.nonNull;
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private AccountService accountService;
-
-    private UserRepository userRepository;
 
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -81,15 +77,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private void resolveAccountInfo(HttpServletRequest request) {
         resolveAccountServiceBean(request);
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if (isNull(userRepository)) {
-            ServletContext servletContext = request.getServletContext();
-            WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-            userRepository = webApplicationContext.getBean(UserRepository.class);
-        }
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException(User.class, username));
-        accountService.setUser(user);
+        accountService.setAccount(TokenService.parseToken(request.getHeader(HEADER_STRING)));
     }
 
     private void resolveAccountServiceBean(HttpServletRequest request) {

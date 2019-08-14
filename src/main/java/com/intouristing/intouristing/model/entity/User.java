@@ -30,8 +30,6 @@ public class User {
 
     private String password;
 
-    private String token;
-
     @Column(unique = true)
     private String email;
 

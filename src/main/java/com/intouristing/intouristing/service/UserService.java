@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -44,7 +45,7 @@ public class UserService extends RootService {
                 .email(userDTO.getEmail())
                 .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
                 .build();
-        user.getUserPosition().setUser(user);
+        Optional.ofNullable(user.getUserPosition()).ifPresent(pos -> pos.setUser(user));
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
 
