@@ -2,6 +2,7 @@ package com.intouristing.intouristing.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.model.dto.UserDTO;
+import com.intouristing.intouristing.service.AccountService;
 import com.intouristing.intouristing.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ public class UserController {
 
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private final AccountService accountService;
 
     @Autowired
-    public UserController(UserService userService, ObjectMapper objectMapper) {
+    public UserController(UserService userService, ObjectMapper objectMapper, AccountService accountService) {
         this.userService = userService;
         this.objectMapper = objectMapper;
+        this.accountService = accountService;
     }
 
     @GetMapping("/{id}")
@@ -62,6 +65,6 @@ public class UserController {
     public String search(String message) {
         System.out.println(message);
 
-        return message;
+        return "found";
     }
 }

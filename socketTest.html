@@ -1,0 +1,34 @@
+<header>
+    <script src="/home/adsim/Downloads/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+</header>
+<script>
+
+    var stompClient = null;
+
+    function connect() {
+        var socket = new SockJS('http://127.0.0.1:8080/sockjs')
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(
+            {'Authorization': 'token'},
+            function (message) {
+                stompClient.subscribe('/users/found', function (message) {
+                    console.log(message.body);
+                });
+            })
+    }
+    ;
+
+    function sendMessage() {
+        stompClient.send("/app/users/search", {'Authorization': 'token'}, "HELLOOOO");
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.deactivate();
+        }
+        console.log("Disconnected");
+    }
+
+</script>

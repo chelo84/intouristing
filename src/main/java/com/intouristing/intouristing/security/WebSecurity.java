@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,6 +32,7 @@ import static com.intouristing.intouristing.security.SecurityConstants.SIGN_UP_U
  * Created by Marcelo Lacroix on 11/08/2019.
  */
 @EnableWebSecurity
+@CrossOrigin
 @Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
@@ -49,6 +51,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.GET, "/ping").permitAll()
+                .antMatchers(HttpMethod.GET, "/sockjs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), userRepository))
@@ -61,14 +64,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://127.0.0.1:8080"));
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+////        corsConfiguration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:8080", "192.168.88.192", "0.0.0.0", "http://127.0.0.1", "http://localhost", "177.69.213.174"));
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
 
     @Bean
     @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
