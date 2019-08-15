@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.Application;
 import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.model.dto.UserPositionDTO;
-import com.intouristing.intouristing.security.token.TokenService;
 import com.intouristing.intouristing.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,11 +12,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.intouristing.intouristing.security.SecurityConstants.HEADER_STRING;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,11 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class JWTAuthTests {
-
-    private final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0VXNlcm5hbWUiLCJsYXN0TmFtZSI6InRlc3RMYXN0TmFtZSIsIm5hbWUiOiJ0ZXN0TmFtZSIsImlkIjoxLCJleHAiOjE" +
-            "1NjY2MDg5MTQyMzMsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsInVzZXJuYW1lIjoidGVzdFVzZXJuYW1lIn0.Ic7kRVp7Zut3hOGNLjnZ4NLvL61sW66p_ZbTfX5HZcQ";
 
     @Autowired
     private MockMvc mockMvc;
@@ -65,6 +64,10 @@ public class JWTAuthTests {
                 .build();
     }
 
+    private String usernamePasswordToLoginCredentials(String username, String password) {
+        return String.format("{\"username\": \"%s\", \"password\": \"%s\"}", username, password);
+    }
+
     @Test
     public void shouldNotAllowNotAuthenticatedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users/1"))
@@ -72,30 +75,42 @@ public class JWTAuthTests {
     }
 
     @Test
-    public void shouldParseToken() {
-        Account account = TokenService.parseToken(TOKEN);
-
-        assertEquals(account.getId().longValue(), 1L);
-        assertEquals(account.getEmail(), "test@test.com");
-        assertEquals(account.getName(), "testName");
-        assertEquals(account.getLastName(), "testLastName");
-        assertEquals(account.getUsername(), "testUsername");
-    }
-
-    @Test
     public void shouldReturnNewAccessToken() throws Exception {
         UserDTO userDTO = this.buildUserDTO();
         userService.create(userDTO);
 
-        String jsonLoginCredentials = String.format("{\"username\": \"%s\", \"password\": \"%s\"}", userDTO.getUsername(), userDTO.getPassword());
+        String jsonLoginCredentials = usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/login").content(jsonLoginCredentials))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String accessToken = mvcResult.getResponse().getHeader("Authorization");
+        String accessToken = mvcResult.getResponse().getHeader(HEADER_STRING);
 
         assertNotNull(accessToken);
         assertTrue(StringUtils.isNotEmpty(accessToken));
     }
+
+    @Test
+    public void shouldBeAuthorizedUsingAccessToken() throws Exception {
+        UserDTO userDTO = this.buildUserDTO();
+        userService.create(userDTO);
+
+        String jsonLoginCredentials = usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
+
+        String accessToken = mockMvc.perform(MockMvcRequestBuilders.post("/login").content(jsonLoginCredentials))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getHeader(HEADER_STRING);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/users/1").header(HEADER_STRING, accessToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertNotNull(mvcResult);
+        assertNotNull(mvcResult.getResponse());
+        assertEquals(mvcResult.getResponse().getStatus(), 200);
+    }
+
 }
