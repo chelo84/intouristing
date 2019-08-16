@@ -25,4 +25,5 @@ public class Application {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
+
 }

@@ -16,12 +16,15 @@
                 stompClient.subscribe('/users/found', function (message) {
                     console.log(message.body);
                 });
+            },
+            function(error) {
+                console.log(error)
             })
     }
     ;
 
     function sendMessage() {
-        stompClient.send("/app/users/search", {'Authorization': 'token'}, "HELLOOOO");
+        stompClient.send("/ws/users/search", {'Authorization': 'token'}, "HELLOOOO");
     }
 
     function disconnect() {
