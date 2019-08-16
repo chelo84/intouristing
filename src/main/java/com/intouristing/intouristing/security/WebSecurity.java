@@ -64,6 +64,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+    public AccountService accountService() {
+        return new AccountServiceImpl();
+    }
+
 //    @Bean
 //    CorsConfigurationSource corsConfigurationSource() {
 //        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -73,9 +79,4 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
 //        return source;
 //    }
 
-    @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-    public AccountService accountService() {
-        return new AccountServiceImpl();
-    }
 }
