@@ -19,10 +19,13 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ExecutorChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.intouristing.intouristing.security.SecurityConstants.*;
@@ -47,8 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/users", "/error");
-//        config.enableSimpleBroker("/error");
+        config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/ws");
     }
 
@@ -63,31 +65,40 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-
-                try {
-                    String token = Optional.ofNullable(accessor.getNativeHeader(HEADER_STRING))
-                            .map(list -> list.stream().findFirst().orElse(null))
-                            .orElse(null);
-
-                    if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                        String username = verifyToken(token);
-                        Optional<User> optUser = userRepository.findByUsername(username);
-                        if (nonNull(username) && optUser.isPresent()) {
-                            accountWsService.setAccount(TokenService.parseToken(token));
-                            accountWsService.setIsSearchCancelled(nonNull(optUser.get().getUserSearchControl().getCancelledAt()));
-                        }
-                    } else if (StompCommand.SEND.equals(accessor.getCommand())) {
-                        String username = verifyToken(token);
-                        Optional<User> optUser = userRepository.findByUsername(username);
-                        accountWsService.setIsSearchCancelled(nonNull(optUser.get().getUserSearchControl().getCancelledAt()));
+                String token = Optional.ofNullable(accessor.getNativeHeader(HEADER_STRING))
+                        .map(list -> list.stream().findFirst().orElse(null))
+                        .orElse(null);
+                String username = null;
+                if (!StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                    try {
+                        username = verifyToken(token);
+                    } catch (Exception ex) {
+                        throw new MessageDeliveryException(message, ex.getMessage());
                     }
-                } catch (Exception ex) {
-                    throw new MessageDeliveryException(message, ex.getMessage());
+                    setAccount(accessor, token, username);
                 }
-
                 return message;
             }
         });
+    }
+
+    private void setAccount(StompHeaderAccessor accessor, String token, String username) {
+        Optional<User> optUser = userRepository.findByUsername(username);
+        if (nonNull(username) && optUser.isPresent()) {
+            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                setContextAuthentication(accessor, username);
+            }
+
+            if (!StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                accountWsService.setAccount(TokenService.parseToken(token));
+                accountWsService.setIsSearchCancelled(nonNull(optUser.get().getUserSearchControl().getCancelledAt()));
+            }
+        }
+    }
+
+    private void setContextAuthentication(StompHeaderAccessor accessor, String username) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singleton((GrantedAuthority) () -> "USER"));
+        accessor.setUser(authentication);
     }
 
     private String verifyToken(String token) {

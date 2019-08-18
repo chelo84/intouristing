@@ -20,13 +20,16 @@
         stompClient.connect(
             headers,
             function () {
-                stompClient.subscribe('/users/search', function (message) {
+                stompClient.subscribe('/user/queue/users/search', function (message) {
+                    console.log("/users/search")
                     console.log(message);
                 });
-                stompClient.subscribe('/users/search/cancel', function (message) {
+                stompClient.subscribe('/user/queue/users/search/cancel', function (message) {
+                    console.log("/users/search/cancel")
                     console.log(message);
                 });
-                stompClient.subscribe('/error', function (error) {
+                stompClient.subscribe('/user/queue/error', function (error) {
+                    console.log("/error")
                     console.log(error);
                 });
             },

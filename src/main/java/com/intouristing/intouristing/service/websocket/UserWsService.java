@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 
 /**
  * Created by Marcelo Lacroix on 17/08/2019.
@@ -40,14 +39,14 @@ public class UserWsService extends RootWsService {
         User user = super.getUser();
         this.resetUserSearchControl(user);
         Integer count = 0;
-        while (isNotTrue(accountWsService.isSearchCancelled()) && isNotTrue(accountWsService.isSearchFinished())) {
-            try {
-                log.info("Searching... ({})", ++count);
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while (isNotTrue(accountWsService.isSearchCancelled()) && isNotTrue(accountWsService.isSearchFinished())) {
+//            try {
+//                log.info("Searching... ({})", ++count);
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         return new ArrayList<>();
     }
 

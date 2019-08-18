@@ -25,7 +25,7 @@ public class ApiValidatorWsExceptionHandler {
     private final String STOMP_COMMAND = "stompCommand";
 
     @MessageExceptionHandler
-    @SendTo("/error")
+    @SendTo("queue/error")
     public final ErrorWsDTO handleWebSocketExceptions(Exception ex, Message message) {
         ErrorWsDTO errorDetails = buildErrorDetails(ex, message);
 
