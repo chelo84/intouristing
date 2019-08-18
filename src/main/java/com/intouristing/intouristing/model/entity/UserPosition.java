@@ -50,6 +50,6 @@ public class UserPosition {
                     .heading(userPositionDTO.getHeading())
                     .build();
         }
-        return null;
+        return new UserPosition();
     }
 }

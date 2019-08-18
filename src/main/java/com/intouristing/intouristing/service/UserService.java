@@ -48,7 +48,7 @@ public class UserService extends RootService {
                 .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
                 .createdAt(LocalDateTime.now())
                 .build();
-        Optional.ofNullable(user.getUserPosition()).ifPresent(pos -> pos.setUser(user));
+        user.getUserPosition().setUser(user);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
 
