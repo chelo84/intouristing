@@ -1,37 +1,56 @@
 <header>
     <script src="/home/adsim/Downloads/stomp.min.js"></script>
+    <script src="/stomp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 </header>
 <script>
 
     var stompClient = null;
+    var accessToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGVsbzg0IiwibGFzdE5hbWUiOiJMYWNyb2l4IiwibmFtZSI6Ik1hcmNlbG8iLCJpZCI6MSwiZXhwIjoxNTY2OTUwNjIzLCJlbWFpbCI6Im1hcmNlbG9fbGFjcm9peEBob3RtYWlsLmNvbSIsInVzZXJuYW1lIjoiY2hlbG84NCJ9.JYx3aXU7r5lAdiKXV4KIWUkK3dBy_Z5-bHR_R9wX12jGqZeTBqoQKnrbmZcHLvTFl_tzbDXo-yNY2y2LCLAO7w";
+    var headers = {
+        'Authorization': accessToken
+    };
 
     function connect() {
         var socket = new SockJS('http://127.0.0.1:8080/sockjs')
         stompClient = Stomp.over(socket);
 
+        console.log("stompClient == " + stompClient)
+
         stompClient.connect(
-            {'Authorization': 'token'},
-            function (message) {
-                stompClient.subscribe('/users/found', function (message) {
-                    console.log(message.body);
+            headers,
+            function () {
+                stompClient.subscribe('/users/search', function (message) {
+                    console.log(message);
+                });
+                stompClient.subscribe('/users/search/cancel', function (message) {
+                    console.log(message);
+                });
+                stompClient.subscribe('/error', function (error) {
+                    console.log(error);
                 });
             },
-            function(error) {
-                console.log(error)
+            function (error) {
+                if (error && typeof error == 'object') {
+                    console.error(error.headers ? error.headers.message : "Something went wrong");
+                }
             })
     }
-    ;
 
-    function sendMessage() {
-        stompClient.send("/ws/users/search", {'Authorization': 'token'}, "HELLOOOO");
+    function search() {
+        stompClient.send("/ws/users/search", headers, {});
+    }
+
+    function cancelSearch() {
+        stompClient.send("/ws/users/search/cancel", headers, {});
     }
 
     function disconnect() {
         if (stompClient !== null) {
-            stompClient.deactivate();
+            stompClient.disconnect(function () {
+                console.log("disconnected")
+            });
         }
-        console.log("Disconnected");
     }
 
 </script>

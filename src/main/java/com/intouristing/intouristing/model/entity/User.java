@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -26,12 +27,18 @@ public class User {
     private String lastName;
 
     @Column(unique = true)
+    private String email;
+
+    @Column(unique = true)
     private String username;
 
     private String password;
 
-    @Column(unique = true)
-    private String email;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime lastLogin;
 
     @Lob
     @Column(columnDefinition = "LONGBLOB")
@@ -39,5 +46,8 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPosition userPosition;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserSearchControl userSearchControl;
 
 }

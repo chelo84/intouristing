@@ -5,12 +5,14 @@ import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.model.entity.User;
 import com.intouristing.intouristing.model.entity.UserPosition;
 import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -44,6 +46,7 @@ public class UserService extends RootService {
                 .password(userDTO.getPassword())
                 .email(userDTO.getEmail())
                 .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
+                .createdAt(LocalDateTime.now())
                 .build();
         Optional.ofNullable(user.getUserPosition()).ifPresent(pos -> pos.setUser(user));
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));

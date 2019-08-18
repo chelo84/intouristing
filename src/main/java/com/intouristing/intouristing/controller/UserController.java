@@ -2,15 +2,13 @@ package com.intouristing.intouristing.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.model.dto.UserDTO;
-import com.intouristing.intouristing.service.AccountService;
 import com.intouristing.intouristing.service.UserService;
+import com.intouristing.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,11 +58,4 @@ public class UserController {
                 .body(userService.getAvatarImage(id));
     }
 
-    @MessageMapping("/users/search")
-    @SendTo("/users/found")
-    public String search(String message) {
-        System.out.println(message);
-
-        return "found";
-    }
 }

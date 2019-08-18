@@ -3,7 +3,6 @@ package com.intouristing.intouristing.i18n;
 import com.intouristing.intouristing.Application;
 import com.intouristing.intouristing.controller.handler.ApiValidatorExceptionHandler;
 import com.intouristing.intouristing.exceptions.NotFoundException;
-import com.intouristing.intouristing.exceptions.TokenExpiredException;
 import com.intouristing.intouristing.exceptions.TokenNotFoundException;
 import com.intouristing.intouristing.exceptions.TokenParseException;
 import com.intouristing.intouristing.model.dto.ErrorDTO;
@@ -40,6 +39,7 @@ public class InternationalizationTest {
 
     private final String ptBr = "pt-BR",
             enUs = "en-US";
+
     @Autowired
     ApiValidatorExceptionHandler exceptionHandler;
     @Autowired
@@ -99,11 +99,6 @@ public class InternationalizationTest {
         Class<?>[] constructorClasses = ArrayUtils.toArray(Class.class, Long.class);
         Serializable[] serializables = ArrayUtils.toArray(User.class, 9992222L);
         createExceptionTest(NotFoundException.class, "entity.of.type.not.found", constructorClasses, serializables);
-    }
-
-    @Test
-    public void shouldReturnTokenExpiredExceptionWithInternatinalizedMessage() throws Exception {
-        createExceptionTest(TokenExpiredException.class, "token.expired", null, null);
     }
 
     @Test

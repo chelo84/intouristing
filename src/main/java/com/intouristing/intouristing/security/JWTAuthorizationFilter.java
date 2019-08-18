@@ -3,7 +3,7 @@ package com.intouristing.intouristing.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.intouristing.intouristing.security.token.TokenService;
-import com.intouristing.intouristing.service.AccountService;
+import com.intouristing.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

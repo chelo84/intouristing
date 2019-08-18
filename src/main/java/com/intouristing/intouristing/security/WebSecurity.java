@@ -1,10 +1,10 @@
 package com.intouristing.intouristing.security;
 
-import com.intouristing.intouristing.conf.CorsConfig;
 import com.intouristing.intouristing.model.repository.UserRepository;
-import com.intouristing.intouristing.service.AccountService;
-import com.intouristing.intouristing.service.AccountServiceImpl;
 import com.intouristing.intouristing.service.UserDetailsServiceImpl;
+import com.intouristing.intouristing.service.account.AccountService;
+import com.intouristing.intouristing.service.account.AccountServiceImpl;
+import com.intouristing.intouristing.service.account.AccountWsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -17,14 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static com.intouristing.intouristing.security.SecurityConstants.SIGN_UP_URL;
 
@@ -70,13 +63,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
         return new AccountServiceImpl();
     }
 
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-////        corsConfiguration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:8080", "192.168.88.192", "0.0.0.0", "http://127.0.0.1", "http://localhost", "177.69.213.174"));
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;
-//    }
+    @Bean
+    @Scope(value = "websocket", proxyMode = ScopedProxyMode.INTERFACES)
+    public AccountWsService accountWsService() {
+        return new AccountServiceImpl();
+    }
 
 }
