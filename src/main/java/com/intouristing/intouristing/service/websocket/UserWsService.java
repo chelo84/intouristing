@@ -2,6 +2,7 @@ package com.intouristing.intouristing.service.websocket;
 
 import com.intouristing.intouristing.model.entity.User;
 import com.intouristing.intouristing.model.entity.UserSearchControl;
+import com.intouristing.intouristing.model.repository.UserPositionRepository;
 import com.intouristing.intouristing.model.repository.UserRepository;
 import com.intouristing.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -26,11 +26,13 @@ public class UserWsService extends RootWsService {
 
     private final UserRepository userRepository;
     private final AccountWsService accountWsService;
+    private final UserPositionRepository userPositionRepository;
 
     @Autowired
-    public UserWsService(UserRepository userRepository, AccountWsService accountWsService) {
+    public UserWsService(UserRepository userRepository, AccountWsService accountWsService, UserPositionRepository userPositionRepository) {
         this.userRepository = userRepository;
         this.accountWsService = accountWsService;
+        this.userPositionRepository = userPositionRepository;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -39,10 +41,19 @@ public class UserWsService extends RootWsService {
         if (count == 1) {
             this.resetUserSearchControl(user);
         }
+        double latitude = super.getUser().getUserPosition().getLatitude(),
+                longitude = super.getUser().getUserPosition().getLongitude();
 
-        List<User> usersFound = new ArrayList<>();
+        double radius = 20 * (count * 0.03),
+                kmInLongitudeDegree = 111.320 * Math.cos(latitude / 180.0 * Math.PI),
+                deltaLat = radius / 111.1,
+                deltaLong = radius / kmInLongitudeDegree,
+                minLat = latitude - deltaLat,
+                maxLat = latitude + deltaLat,
+                minLong = longitude + deltaLong,
+                maxLong = longitude + deltaLong;
 
-        return usersFound;
+        return userPositionRepository.findAllUsersInRange(minLat, maxLat, minLong, maxLong);
     }
 
     @Transactional(propagation = Propagation.NEVER)
