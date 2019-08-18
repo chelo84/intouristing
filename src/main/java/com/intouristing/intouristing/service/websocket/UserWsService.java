@@ -1,6 +1,5 @@
 package com.intouristing.intouristing.service.websocket;
 
-import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.model.entity.User;
 import com.intouristing.intouristing.model.entity.UserSearchControl;
 import com.intouristing.intouristing.model.repository.UserRepository;
@@ -35,19 +34,15 @@ public class UserWsService extends RootWsService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<UserDTO> search() {
+    public List<User> search(Integer count) {
         User user = super.getUser();
-        this.resetUserSearchControl(user);
-        Integer count = 0;
-//        while (isNotTrue(accountWsService.isSearchCancelled()) && isNotTrue(accountWsService.isSearchFinished())) {
-//            try {
-//                log.info("Searching... ({})", ++count);
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        return new ArrayList<>();
+        if (count == 1) {
+            this.resetUserSearchControl(user);
+        }
+
+        List<User> usersFound = new ArrayList<>();
+
+        return usersFound;
     }
 
     @Transactional(propagation = Propagation.NEVER)
@@ -56,7 +51,7 @@ public class UserWsService extends RootWsService {
         user.getUserSearchControl().setCancelledAt(LocalDateTime.now());
         userRepository.save(user);
 
-        accountWsService.setIsSearchCancelled(true);
+        accountWsService.setSearchCancelled(true);
 
         return user;
     }
@@ -74,8 +69,8 @@ public class UserWsService extends RootWsService {
         userSearchControl.setStartedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        accountWsService.setIsSearchCancelled(false);
-        accountWsService.setIsSearchFinished(false);
+        accountWsService.setSearchCancelled(false);
+        accountWsService.setSearchFinished(false);
 
         return user.getUserSearchControl();
     }

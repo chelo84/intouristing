@@ -21,6 +21,7 @@ import org.springframework.messaging.support.ExecutorChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -69,7 +70,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         .map(list -> list.stream().findFirst().orElse(null))
                         .orElse(null);
                 String username = null;
-                if (!StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                if (!StompCommand.SUBSCRIBE.equals(accessor.getCommand()) && !StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     try {
                         username = verifyToken(token);
                     } catch (Exception ex) {
@@ -83,15 +84,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     private void setAccount(StompHeaderAccessor accessor, String token, String username) {
-        Optional<User> optUser = userRepository.findByUsername(username);
-        if (nonNull(username) && optUser.isPresent()) {
-            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                setContextAuthentication(accessor, username);
-            }
+        if (!StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            Optional<User> optUser = userRepository.findByUsername(username);
+            if (nonNull(username) && optUser.isPresent()) {
+                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    setContextAuthentication(accessor, username);
+                }
 
-            if (!StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                 accountWsService.setAccount(TokenService.parseToken(token));
-                accountWsService.setIsSearchCancelled(nonNull(optUser.get().getUserSearchControl().getCancelledAt()));
+                Boolean searchCancelled = nonNull(optUser.get().getUserSearchControl()) && nonNull(optUser.get().getUserSearchControl().getCancelledAt());
+                accountWsService.setSearchCancelled(searchCancelled);
             }
         }
     }
@@ -99,6 +101,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private void setContextAuthentication(StompHeaderAccessor accessor, String username) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singleton((GrantedAuthority) () -> "USER"));
         accessor.setUser(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private String verifyToken(String token) {

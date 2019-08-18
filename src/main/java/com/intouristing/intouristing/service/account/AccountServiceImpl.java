@@ -11,9 +11,9 @@ public class AccountServiceImpl implements AccountService, AccountWsService {
 
     private Account account;
 
-    private Boolean isSearchCancelled;
+    private Boolean searchCancelled;
 
-    private Boolean isSearchFinished;
+    private Boolean searchFinished;
 
     @Override
     public Account getAccount() {
@@ -27,22 +27,22 @@ public class AccountServiceImpl implements AccountService, AccountWsService {
 
     @Override
     public Boolean isSearchCancelled() {
-        return isSearchCancelled;
+        return searchCancelled;
     }
 
     @Override
-    public void setIsSearchCancelled(Boolean isSearchCancelled) {
-        this.isSearchCancelled = isSearchCancelled;
+    public void setSearchCancelled(Boolean isSearchCancelled) {
+        this.searchCancelled = isSearchCancelled;
     }
 
     @Override
     public Boolean isSearchFinished() {
-        return isSearchFinished;
+        return searchFinished;
     }
 
     @Override
-    public void setIsSearchFinished(Boolean isSearchFinished) {
-        this.isSearchFinished = isSearchFinished;
+    public void setSearchFinished(Boolean isSearchFinished) {
+        this.searchFinished = isSearchFinished;
     }
 }
 

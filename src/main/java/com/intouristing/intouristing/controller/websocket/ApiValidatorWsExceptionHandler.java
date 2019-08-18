@@ -4,8 +4,8 @@ import com.intouristing.intouristing.model.dto.ErrorWsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +25,7 @@ public class ApiValidatorWsExceptionHandler {
     private final String STOMP_COMMAND = "stompCommand";
 
     @MessageExceptionHandler
-    @SendTo("queue/error")
+    @SendToUser("/queue/error")
     public final ErrorWsDTO handleWebSocketExceptions(Exception ex, Message message) {
         ErrorWsDTO errorDetails = buildErrorDetails(ex, message);
 

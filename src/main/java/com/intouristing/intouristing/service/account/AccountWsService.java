@@ -13,9 +13,9 @@ public interface AccountWsService {
 
     Boolean isSearchCancelled();
 
-    void setIsSearchCancelled(Boolean isSearchCancelled);
+    void setSearchCancelled(Boolean isSearchCancelled);
 
     Boolean isSearchFinished();
 
-    void setIsSearchFinished(Boolean isSearchFinished);
+    void setSearchFinished(Boolean isSearchFinished);
 }
