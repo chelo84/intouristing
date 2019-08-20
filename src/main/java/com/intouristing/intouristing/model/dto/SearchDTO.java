@@ -18,7 +18,4 @@ public class SearchDTO {
 
     private List<UserDTO> users;
 
-    private Boolean cancelled;
-
-    private Boolean finished;
 }

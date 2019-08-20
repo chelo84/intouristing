@@ -92,8 +92,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 }
 
                 accountWsService.setAccount(TokenService.parseToken(token));
-                Boolean searchCancelled = nonNull(optUser.get().getUserSearchControl()) && nonNull(optUser.get().getUserSearchControl().getCancelledAt());
-                accountWsService.setSearchCancelled(searchCancelled);
             }
         }
     }

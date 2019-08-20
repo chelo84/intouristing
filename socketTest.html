@@ -6,11 +6,13 @@
 <script>
 
     var stompClient = null;
-    var accessToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGVsbzg0IiwibGFzdE5hbWUiOiJMYWNyb2l4IiwibmFtZSI6Ik1hcmNlbG8iLCJpZCI6MSwiZXhwIjoxNTY2OTUwNjIzLCJlbWFpbCI6Im1hcmNlbG9fbGFjcm9peEBob3RtYWlsLmNvbSIsInVzZXJuYW1lIjoiY2hlbG84NCJ9.JYx3aXU7r5lAdiKXV4KIWUkK3dBy_Z5-bHR_R9wX12jGqZeTBqoQKnrbmZcHLvTFl_tzbDXo-yNY2y2LCLAO7w";
+    var accessToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJjZWxvIiwiaWQiOjEsImV4cCI6MTU2NzE4MDU4MCwidXNlcm5hbWUiOiJtYXJjZWxvIn0.RsnlRLMCF0T74lmf6M_iOtqFy5OfozeGgOvbpQtsbQnl7-KMWsjfxFrvwwZf77kB25nPtr8UBKgHepWBZG9gxA"
     var user;
     var headers = {
         'Authorization': accessToken
     };
+    var isSearchCancelled = false;
+    var isSearchFinished = false;
 
     var base64Url = accessToken.replace("Bearer ", "").split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -71,20 +73,21 @@
             function (resp) {
                 respBody = JSON.parse(resp.body)
 
-                if (!respBody.cancelled && !respBody.finished) {
+                if (!isSearchCancelled && !isSearchFinished) {
                     setTimeout(function () {
-                        stompClient.send("/ws/search", headers, ++count);
+                        stompClient.send("/ws/search", headers, ++count * 0.175);
                     }, searchDelay)
                 }
             },
             subHeaders
         );
-        stompClient.send("/ws/search", headers, ++count);
+        stompClient.send("/ws/search", headers, ++count * 0.175);
 
     }
 
     function cancelSearch() {
-        stompClient.send("/ws/search/cancel", headers, {});
+        isSearchCancelled = true;
+        // stompClient.send("/ws/search/cancel", headers, {});
     }
 
     function disconnect() {

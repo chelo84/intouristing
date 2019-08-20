@@ -39,8 +39,8 @@ public class UserWsController extends RootWsController {
 
     @MessageMapping(SEARCH)
     @SendToUser(QUEUE_SEARCH)
-    public SearchDTO search(Integer count, Principal principal) {
-        List<UserDTO> users = userWsService.search(count)
+    public SearchDTO search(double radius) {
+        List<UserDTO> users = userWsService.search(radius)
                 .stream()
                 .map(UserDTO::parseDTO)
                 .collect(Collectors.toList());
@@ -48,17 +48,10 @@ public class UserWsController extends RootWsController {
         return SearchDTO
                 .builder()
                 .users(users)
-                .cancelled(isNotFalse(accountWsService.isSearchCancelled()))
-                .finished(isTrue(accountWsService.isSearchFinished()))
                 .build();
     }
 
-    @MessageMapping(SEARCH_CANCEL)
-    public void cancelSearch() {
-        userWsService.cancelSearch();
-    }
-
-    @MessageMapping("/message")
+    @MessageMapping(SEND_MESSAGE)
     public void message(@Header("sendTo") String sendTo, @Header("group") Boolean group, String message, Principal principal) {
 
         if (isTrue(group)) {

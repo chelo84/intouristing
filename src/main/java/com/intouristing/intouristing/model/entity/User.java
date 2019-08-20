@@ -47,7 +47,4 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPosition userPosition;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private UserSearchControl userSearchControl;
-
 }

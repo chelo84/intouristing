@@ -5,8 +5,8 @@ package com.intouristing.intouristing.controller.websocket;
  */
 public interface WebSocketMessageMapping {
 
-    public static final String SEARCH = "/search";
-    public static final String QUEUE_SEARCH = "/queue" + SEARCH;
-    public static final String SEARCH_CANCEL = "/search/cancel";
+    String SEARCH = "/search";
+    String QUEUE_SEARCH = "/queue" + SEARCH;
+    String SEND_MESSAGE = "/send-message";
 
 }
