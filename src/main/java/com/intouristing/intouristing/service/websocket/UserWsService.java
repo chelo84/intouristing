@@ -7,7 +7,6 @@ import com.intouristing.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,10 +41,10 @@ public class UserWsService extends RootWsService {
                 deltaLong = radius / kmInLongitudeDegree,
                 minLat = latitude - deltaLat,
                 maxLat = latitude + deltaLat,
-                minLong = longitude + deltaLong,
+                minLong = longitude - deltaLong,
                 maxLong = longitude + deltaLong;
 
-        return userPositionRepository.findAllUsersButCurrentInRange(currentUser.getId(), minLat, maxLat, minLong, maxLong);
+        return userPositionRepository.findAllUsersInRange(minLat, maxLat, minLong, maxLong, currentUser.getId());
     }
 
 }

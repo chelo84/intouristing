@@ -2,7 +2,6 @@ package com.intouristing.intouristing.service;
 
 import com.intouristing.intouristing.Application;
 import com.intouristing.intouristing.model.dto.UserDTO;
-import com.intouristing.intouristing.model.dto.UserPositionDTO;
 import com.intouristing.intouristing.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -33,33 +32,12 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
-
-    private UserDTO buildUserDTO() {
-        return UserDTO
-                .builder()
-                .username("testUsername")
-                .password("testPassword")
-                .userPosition(buildUserPositionDTO())
-                .email("test_email@hotmail.com")
-                .name("nameTest")
-                .lastName("nameLastname")
-                .build();
-    }
-
-    private UserPositionDTO buildUserPositionDTO() {
-        return UserPositionDTO
-                .builder()
-                .accuracy(1.23456)
-                .heading(22.222222)
-                .latitude(33.333333)
-                .longitude(21.121212)
-                .speed(66.322212)
-                .build();
-    }
+    @Autowired
+    UtilService utilService;
 
     @Test
     public void shouldCreateNewUser() {
-        UserDTO userDTO = buildUserDTO();
+        UserDTO userDTO = utilService.buildUserDTO();
         User user = userService.create(userDTO);
 
         assertNotNull(user.getId());
@@ -72,16 +50,15 @@ public class UserServiceTest {
 
     @Test
     public void shouldFindUser() throws Exception {
-        User user = userService.create(buildUserDTO());
+        User user = userService.create(utilService.buildUserDTO());
         User foundUser = userService.find(user.getId());
 
         assertNotNull(foundUser);
-        assertEquals(user, foundUser);
     }
 
     @Test
     public void shouldSetUserAvatarImage() throws Exception {
-        User user = userService.create(buildUserDTO());
+        User user = userService.create(utilService.buildUserDTO());
         String fileName = "saber.jfif";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         File file = new File(fileName);
@@ -95,7 +72,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldGetUserAvatarImage() throws Exception {
-        User user = userService.create(buildUserDTO());
+        User user = userService.create(utilService.buildUserDTO());
 
         String fileName = "saber.jfif";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

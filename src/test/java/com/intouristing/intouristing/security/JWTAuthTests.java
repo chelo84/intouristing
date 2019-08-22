@@ -1,10 +1,9 @@
 package com.intouristing.intouristing.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.Application;
 import com.intouristing.intouristing.model.dto.UserDTO;
-import com.intouristing.intouristing.model.dto.UserPositionDTO;
 import com.intouristing.intouristing.service.UserService;
+import com.intouristing.intouristing.service.UtilService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -34,39 +33,10 @@ public class JWTAuthTests {
 
     @Autowired
     private MockMvc mockMvc;
-
+    @Autowired
+    private UtilService utilService;
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private UserDTO buildUserDTO() {
-        return UserDTO
-                .builder()
-                .username("testUsername")
-                .password("testPassword")
-                .userPosition(buildUserPositionDTO())
-                .email("test_email@hotmail.com")
-                .name("nameTest")
-                .lastName("nameLastname")
-                .build();
-    }
-
-    private UserPositionDTO buildUserPositionDTO() {
-        return UserPositionDTO
-                .builder()
-                .accuracy(1.23456)
-                .heading(22.222222)
-                .latitude(33.333333)
-                .longitude(21.121212)
-                .speed(66.322212)
-                .build();
-    }
-
-    private String usernamePasswordToLoginCredentials(String username, String password) {
-        return String.format("{\"username\": \"%s\", \"password\": \"%s\"}", username, password);
-    }
 
     @Test
     public void shouldNotAllowNotAuthenticatedRequest() throws Exception {
@@ -76,10 +46,10 @@ public class JWTAuthTests {
 
     @Test
     public void shouldReturnNewAccessToken() throws Exception {
-        UserDTO userDTO = this.buildUserDTO();
+        UserDTO userDTO = utilService.buildUserDTO();
         userService.create(userDTO);
 
-        String jsonLoginCredentials = usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
+        String jsonLoginCredentials = utilService.usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/login").content(jsonLoginCredentials))
                 .andExpect(status().isOk())
@@ -93,10 +63,10 @@ public class JWTAuthTests {
 
     @Test
     public void shouldBeAuthorizedUsingAccessToken() throws Exception {
-        UserDTO userDTO = this.buildUserDTO();
+        UserDTO userDTO = utilService.buildUserDTO();
         userService.create(userDTO);
 
-        String jsonLoginCredentials = usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
+        String jsonLoginCredentials = utilService.usernamePasswordToLoginCredentials(userDTO.getUsername(), userDTO.getPassword());
 
         String accessToken = mockMvc.perform(MockMvcRequestBuilders.post("/login").content(jsonLoginCredentials))
                 .andExpect(status().isOk())

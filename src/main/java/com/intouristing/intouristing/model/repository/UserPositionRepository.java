@@ -14,10 +14,10 @@ public interface UserPositionRepository extends JpaRepository<UserPosition, Long
 
     @Query(value = "select user from UserPosition userPosition " +
             "join userPosition.user user " +
-            "where userPosition.id != ?1 " +
-            "and userPosition.latitude >= ?1 " +
+            "where userPosition.latitude >= ?1 " +
             "and userPosition.latitude <= ?2 " +
             "and userPosition.longitude >= ?3 " +
-            "and userPosition.longitude <= ?4 ")
-    List<User> findAllUsersButCurrentInRange(Long userId, double minLat, double maxLat, double minLong, double maxLong);
+            "and userPosition.longitude <= ?4 " +
+            "and user.id <> ?5 ")
+    List<User> findAllUsersInRange(double minLat, double maxLat, double minLong, double maxLong, long userId);
 }

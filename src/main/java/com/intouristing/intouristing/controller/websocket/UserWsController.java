@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.intouristing.intouristing.controller.websocket.WebSocketMessageMapping.*;
-import static org.apache.commons.lang3.BooleanUtils.isNotFalse;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 /**
@@ -25,7 +24,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
  */
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping
 public class UserWsController extends RootWsController {
 
     private final AccountWsService accountWsService;
