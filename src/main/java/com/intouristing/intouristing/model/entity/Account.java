@@ -1,4 +1,4 @@
-package com.intouristing.intouristing.security;
+package com.intouristing.intouristing.model.entity;
 
 import com.auth0.jwt.interfaces.Claim;
 import lombok.*;

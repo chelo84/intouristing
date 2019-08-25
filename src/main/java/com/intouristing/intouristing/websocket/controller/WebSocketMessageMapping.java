@@ -1,4 +1,4 @@
-package com.intouristing.intouristing.controller.websocket;
+package com.intouristing.intouristing.websocket.controller;
 
 /**
  * Created by Marcelo Lacroix on 18/08/2019.

@@ -1,6 +1,6 @@
 package com.intouristing.intouristing.service.account;
 
-import com.intouristing.intouristing.security.Account;
+import com.intouristing.intouristing.model.entity.Account;
 import org.springframework.stereotype.Service;
 
 /**

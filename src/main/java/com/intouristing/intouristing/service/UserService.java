@@ -4,7 +4,7 @@ import com.intouristing.intouristing.exceptions.NotFoundException;
 import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.model.entity.User;
 import com.intouristing.intouristing.model.entity.UserPosition;
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.repository.UserRepository;
 import com.intouristing.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

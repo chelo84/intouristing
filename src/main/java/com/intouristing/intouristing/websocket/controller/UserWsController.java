@@ -1,9 +1,9 @@
-package com.intouristing.intouristing.controller.websocket;
+package com.intouristing.intouristing.websocket.controller;
 
 import com.intouristing.intouristing.model.dto.SearchDTO;
 import com.intouristing.intouristing.model.dto.UserDTO;
 import com.intouristing.intouristing.service.account.AccountWsService;
-import com.intouristing.intouristing.service.websocket.UserWsService;
+import com.intouristing.intouristing.websocket.service.UserWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.intouristing.intouristing.controller.websocket.WebSocketMessageMapping.*;
+import static com.intouristing.intouristing.websocket.controller.WebSocketMessageMapping.*;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 /**

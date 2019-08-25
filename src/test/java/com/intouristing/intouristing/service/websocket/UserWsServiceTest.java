@@ -2,8 +2,8 @@ package com.intouristing.intouristing.service.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.intouristing.model.dto.UserDTO;
-import com.intouristing.intouristing.model.repository.UserRepository;
-import com.intouristing.intouristing.security.token.TokenService;
+import com.intouristing.intouristing.repository.UserRepository;
+import com.intouristing.intouristing.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,8 +25,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import static com.intouristing.intouristing.controller.websocket.WebSocketMessageMapping.QUEUE_SEARCH;
-import static com.intouristing.intouristing.controller.websocket.WebSocketMessageMapping.SEARCH;
+import static com.intouristing.intouristing.websocket.controller.WebSocketMessageMapping.QUEUE_SEARCH;
+import static com.intouristing.intouristing.websocket.controller.WebSocketMessageMapping.SEARCH;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**

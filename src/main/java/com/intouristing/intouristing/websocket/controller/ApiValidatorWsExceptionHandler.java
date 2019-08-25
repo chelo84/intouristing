@@ -1,4 +1,4 @@
-package com.intouristing.intouristing.controller.websocket;
+package com.intouristing.intouristing.websocket.controller;
 
 import com.intouristing.intouristing.model.dto.ErrorWsDTO;
 import lombok.extern.slf4j.Slf4j;

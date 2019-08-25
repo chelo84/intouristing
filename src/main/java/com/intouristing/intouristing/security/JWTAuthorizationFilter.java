@@ -2,7 +2,7 @@ package com.intouristing.intouristing.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.intouristing.intouristing.security.token.TokenService;
+import com.intouristing.intouristing.service.TokenService;
 import com.intouristing.intouristing.service.account.AccountService;
 import com.intouristing.intouristing.service.account.AccountServiceImpl;
 import lombok.extern.slf4j.Slf4j;

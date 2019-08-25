@@ -1,8 +1,8 @@
-package com.intouristing.intouristing.service.websocket;
+package com.intouristing.intouristing.websocket.service;
 
 import com.intouristing.intouristing.exceptions.NotFoundException;
 import com.intouristing.intouristing.model.entity.User;
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.repository.UserRepository;
 import com.intouristing.intouristing.service.account.AccountWsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

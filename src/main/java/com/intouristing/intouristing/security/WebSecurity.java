@@ -1,6 +1,6 @@
 package com.intouristing.intouristing.security;
 
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.repository.UserRepository;
 import com.intouristing.intouristing.service.UserDetailsServiceImpl;
 import com.intouristing.intouristing.service.account.AccountService;
 import com.intouristing.intouristing.service.account.AccountServiceImpl;

@@ -1,8 +1,8 @@
-package com.intouristing.intouristing.service.websocket;
+package com.intouristing.intouristing.websocket.service;
 
 import com.intouristing.intouristing.model.entity.User;
-import com.intouristing.intouristing.model.repository.UserPositionRepository;
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.repository.UserPositionRepository;
+import com.intouristing.intouristing.repository.UserRepository;
 import com.intouristing.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.intouristing.intouristing.service;
 
 import com.intouristing.intouristing.model.entity.User;
-import com.intouristing.intouristing.model.repository.UserRepository;
+import com.intouristing.intouristing.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,4 +1,4 @@
-package com.intouristing.intouristing.model.repository;
+package com.intouristing.intouristing.repository;
 
 import com.intouristing.intouristing.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
