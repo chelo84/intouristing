@@ -7,6 +7,7 @@ public interface WebSocketMessageMapping {
 
     String SEARCH = "/search";
     String QUEUE_SEARCH = "/queue" + SEARCH;
+
     String SEND_MESSAGE = "/send-message";
 
 }
