@@ -3,14 +3,13 @@ package com.intouristing.websocket.service;
 import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.exceptions.RequestNotAcceptableException;
 import com.intouristing.model.dto.RequestDTO;
-import com.intouristing.model.entity.Relationship;
 import com.intouristing.model.entity.Request;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.enumeration.RelationshipTypeEnum;
-import com.intouristing.model.key.RelationshipId;
 import com.intouristing.repository.RelationshipRepository;
 import com.intouristing.repository.RequestRepository;
 import com.intouristing.repository.UserRepository;
+import com.intouristing.service.RelationshipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,14 @@ public class RequestWsService extends RootWsService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final RelationshipRepository relationshipRepository;
+    private final RelationshipService relationshipService;
 
     @Autowired
-    public RequestWsService(UserRepository userRepository, RequestRepository requestRepository, RelationshipRepository relationshipRepository) {
+    public RequestWsService(UserRepository userRepository, RequestRepository requestRepository, RelationshipRepository relationshipRepository, RelationshipService relationshipService) {
         this.userRepository = userRepository;
         this.requestRepository = requestRepository;
         this.relationshipRepository = relationshipRepository;
+        this.relationshipService = relationshipService;
     }
 
     public Request send(RequestDTO requestDTO) {
@@ -70,22 +71,9 @@ public class RequestWsService extends RootWsService {
         request.setAcceptedAt(LocalDateTime.now());
         requestRepository.save(request);
 
-        Relationship relationship = Relationship
-                .builder()
-                .id(this.createRelationshipId(request))
-                .createdAt(LocalDateTime.now())
-                .type(RelationshipTypeEnum.FRIENDSHIP)
-                .build();
-        relationshipRepository.save(relationship);
+        relationshipService.createFriendship(request.getSender(), request.getDestination());
 
         super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), request.getSender().getUsername());
-    }
-
-    private RelationshipId createRelationshipId(Request request) {
-        User sender = request.getSender(),
-                destination = request.getDestination();
-
-        return (sender.getId() < destination.getId()) ? new RelationshipId(sender, destination) : new RelationshipId(destination, sender);
     }
 
 }

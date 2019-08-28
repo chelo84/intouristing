@@ -20,7 +20,10 @@ import java.time.LocalDateTime;
 public class Relationship {
 
     @Id
-    private RelationshipId id;
+    private User firstUser;
+
+    @Id
+    private User secondUser;
 
     @Enumerated(EnumType.ORDINAL)
     private RelationshipTypeEnum type;
