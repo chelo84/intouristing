@@ -2,8 +2,7 @@ package com.intouristing.websocket.controller;
 
 import com.intouristing.model.dto.SearchDTO;
 import com.intouristing.model.dto.UserDTO;
-import com.intouristing.service.account.AccountWsService;
-import com.intouristing.websocket.service.UserWsService;
+import com.intouristing.websocket.service.SearchWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
@@ -16,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.intouristing.websocket.controller.WebSocketMessageMapping.*;
+import static com.intouristing.websocket.messagemapping.SearchMessageMapping.*;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 /**
@@ -25,21 +24,19 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 @Slf4j
 @RestController
 @RequestMapping
-public class UserWsController extends RootWsController {
+public class SearchWsController extends RootWsController {
 
-    private final AccountWsService accountWsService;
-    private final UserWsService userWsService;
+    private final SearchWsService searchWsService;
 
     @Autowired
-    public UserWsController(AccountWsService accountWsService, UserWsService userWsService) {
-        this.accountWsService = accountWsService;
-        this.userWsService = userWsService;
+    public SearchWsController(SearchWsService searchWsService) {
+        this.searchWsService = searchWsService;
     }
 
     @MessageMapping(SEARCH)
     @SendToUser(QUEUE_SEARCH)
     public SearchDTO search(double radius) {
-        List<UserDTO> users = userWsService.search(radius)
+        List<UserDTO> users = searchWsService.search(radius)
                 .stream()
                 .map(UserDTO::parseDTO)
                 .collect(Collectors.toList());

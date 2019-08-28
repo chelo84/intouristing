@@ -25,8 +25,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import static com.intouristing.websocket.controller.WebSocketMessageMapping.QUEUE_SEARCH;
-import static com.intouristing.websocket.controller.WebSocketMessageMapping.SEARCH;
+import static com.intouristing.websocket.messagemapping.SearchMessageMapping.QUEUE_SEARCH;
+import static com.intouristing.websocket.messagemapping.SearchMessageMapping.SEARCH;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -36,7 +36,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class UserWsServiceTest extends WebSocketTest {
+public class SearchWsServiceTest extends WebSocketTest {
 
     @Autowired
     UserRepository userRepository;

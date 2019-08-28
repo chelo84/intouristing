@@ -1,13 +1,14 @@
 package com.intouristing.model.entity;
 
 import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.key.RelationshipId;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Created by Marcelo Lacroix on 27/08/19.
+ * Created by Marcelo Lacroix on 27/08/2019.
  */
 @Setter
 @Getter
@@ -15,23 +16,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Request {
+@IdClass(RelationshipId.class)
+public class Relationship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private User sender;
-
-    private User destination;
+    private RelationshipId id;
 
     @Enumerated(EnumType.ORDINAL)
     private RelationshipTypeEnum type;
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime acceptedAt;
-
-    private LocalDateTime declinedAt;
-
+    private LocalDateTime updatedAt;
 }
