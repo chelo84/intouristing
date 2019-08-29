@@ -5,6 +5,7 @@ import com.intouristing.model.dto.UserPositionDTO;
 import com.intouristing.service.UserService;
 import com.intouristing.service.UtilService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,15 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import static com.intouristing.security.SecurityConstants.HEADER_STRING;
 import static junit.framework.TestCase.assertTrue;
@@ -38,16 +44,21 @@ public class WebSocketTest {
     String WEBSOCKET_QUEUE = "/queue";
     String WS = "/ws";
     String USER = "/user";
-
-    BlockingQueue<String> blockingQueue;
     WebSocketStompClient stompClient;
-
     @Autowired
     private UserService userService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private UtilService utilService;
+
+    @Before
+    public void setup() {
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+
+        log.info(WEBSOCKET_URI);
+    }
 
     @Test
     public void webSocketTest() {
@@ -124,6 +135,13 @@ public class WebSocketTest {
     }
 
     class DefaultStompFrameHandler implements StompFrameHandler {
+
+        BlockingQueue<String> blockingQueue;
+
+        public DefaultStompFrameHandler() {
+            this.blockingQueue = (new LinkedBlockingDeque<>());
+        }
+
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
             return byte[].class;

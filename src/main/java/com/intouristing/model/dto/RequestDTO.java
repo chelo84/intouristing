@@ -2,7 +2,6 @@ package com.intouristing.model.dto;
 
 import com.intouristing.model.entity.Request;
 import com.intouristing.model.entity.User;
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ public class RequestDTO {
 
     private Long destination;
 
-    private RelationshipTypeEnum type;
+    private String type;
 
     private LocalDateTime createdAt;
 
@@ -36,12 +35,12 @@ public class RequestDTO {
 
     public static RequestDTO parseDTO(Request request) {
         if (nonNull(request)) {
-            RequestDTO
+            return RequestDTO
                     .builder()
                     .id(request.getId())
                     .sender(Optional.ofNullable(request.getSender()).map(User::getId).orElse(null))
                     .destination(Optional.ofNullable(request.getDestination()).map(User::getId).orElse(null))
-                    .type(request.getType())
+                    .type(request.getType().name())
                     .createdAt(request.getCreatedAt())
                     .acceptedAt(request.getAcceptedAt())
                     .declinedAt(request.getDeclinedAt())

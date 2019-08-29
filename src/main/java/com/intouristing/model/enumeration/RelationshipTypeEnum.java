@@ -1,11 +1,8 @@
 package com.intouristing.model.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 /**
  * Created by Marcelo Lacroix on 27/08/19.
  */
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RelationshipTypeEnum {
 
     FRIENDSHIP(0),

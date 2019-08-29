@@ -5,6 +5,7 @@ import com.intouristing.websocket.service.RequestWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ public class RequestWsController {
 
     @MessageMapping(REQUEST)
     @SendToUser(QUEUE_REQUEST)
-    public RequestDTO send(RequestDTO requestDTO) {
+    public RequestDTO send(@Payload RequestDTO requestDTO) {
         return RequestDTO.parseDTO(requestWsService.send(requestDTO));
     }
 

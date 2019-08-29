@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * Created by Marcelo Lacroix on 17/08/2019.
@@ -79,7 +80,7 @@ public class RootWsService {
                     username,
                     "/queue/" + destination,
                     message,
-                    Map.of("SentBy", sentBy)
+                    nonNull(sentBy) ? Map.of("SentBy", sentBy) : null
             );
         }
     }
@@ -89,15 +90,6 @@ public class RootWsService {
                 destination,
                 message,
                 sentBy,
-                usernames.toArray(new String[0])
-        );
-    }
-
-    void sendToAnotherUser(String destination, Object message, List<String> usernames) {
-        this.sendToAnotherUser(
-                destination,
-                message,
-                null,
                 usernames.toArray(new String[0])
         );
     }

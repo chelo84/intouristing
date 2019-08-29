@@ -54,7 +54,7 @@ public class RequestWsService extends RootWsService {
                 .build();
 
         requestRepository.save(request);
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), destination.getUsername());
+        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), null, destination.getUsername());
 
         return request;
     }
