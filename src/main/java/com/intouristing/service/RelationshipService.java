@@ -24,7 +24,7 @@ public class RelationshipService extends RootService {
     }
 
     public Relationship createFriendship(User firstUser, User secondUser) {
-        RelationshipId relationshipId = this.createRelationshipId(firstUser, secondUser);
+        RelationshipId relationshipId = this.createRelationshipId(firstUser.getId(), secondUser.getId());
         Relationship relationship = Relationship
                 .builder()
                 .firstUser(relationshipId.getFirstUser())
@@ -36,7 +36,7 @@ public class RelationshipService extends RootService {
         return relationshipRepository.save(relationship);
     }
 
-    RelationshipId createRelationshipId(User firstUser, User secondUser) {
-        return (firstUser.getId() < secondUser.getId()) ? new RelationshipId(firstUser, secondUser) : new RelationshipId(secondUser, firstUser);
+    RelationshipId createRelationshipId(Long firstUser, Long secondUser) {
+        return (firstUser < secondUser) ? new RelationshipId(firstUser, secondUser) : new RelationshipId(secondUser, firstUser);
     }
 }

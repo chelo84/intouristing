@@ -1,6 +1,5 @@
 package com.intouristing.model.key;
 
-import com.intouristing.model.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,11 +12,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RelationshipId implements Serializable {
 
-    private User firstUser;
+    private Long firstUser;
 
-    private User secondUser;
+    private Long secondUser;
 
-    public RelationshipId(User firstUser, User secondUser) {
+    public RelationshipId(Long firstUser, Long secondUser) {
         this.firstUser = firstUser;
         this.secondUser = secondUser;
     }

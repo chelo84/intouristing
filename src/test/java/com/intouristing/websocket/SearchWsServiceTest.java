@@ -23,6 +23,7 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import static com.intouristing.websocket.messagemapping.SearchMessageMapping.QUEUE_SEARCH;
@@ -47,7 +48,7 @@ public class SearchWsServiceTest extends WebSocketTest {
     public void setup() {
         super.blockingQueue = (new LinkedBlockingDeque<>());
         stompClient = new WebSocketStompClient(new SockJsClient(
-                Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
 
         log.info(WEBSOCKET_URI);
     }

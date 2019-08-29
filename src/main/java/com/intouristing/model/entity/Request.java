@@ -21,8 +21,10 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     private User destination;
 
     @Enumerated(EnumType.ORDINAL)

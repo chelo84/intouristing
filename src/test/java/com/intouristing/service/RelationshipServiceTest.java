@@ -55,8 +55,8 @@ public class RelationshipServiceTest {
         User user1 = userService.create(userDTO1);
         User user2 = userService.create(userDTO2);
 
-        RelationshipId relationshipId = relationshipService.createRelationshipId(user1, user2);
+        RelationshipId relationshipId = relationshipService.createRelationshipId(user1.getId(), user2.getId());
 
-        assertTrue(relationshipId.getFirstUser().getId() > relationshipId.getSecondUser().getId());
+        assertTrue(relationshipId.getFirstUser() < relationshipId.getSecondUser());
     }
 }
