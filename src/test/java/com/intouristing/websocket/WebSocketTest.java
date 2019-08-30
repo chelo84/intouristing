@@ -44,7 +44,7 @@ public class WebSocketTest {
     String WEBSOCKET_QUEUE = "/queue";
     String WS = "/ws";
     String USER = "/user";
-    WebSocketStompClient stompClient;
+    WebSocketStompClient stompClient, anotherStompClient;
     @Autowired
     private UserService userService;
     @Autowired
@@ -56,8 +56,8 @@ public class WebSocketTest {
     public void setup() {
         stompClient = new WebSocketStompClient(new SockJsClient(
                 Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
-
-        log.info(WEBSOCKET_URI);
+        anotherStompClient = new WebSocketStompClient(new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
     }
 
     @Test

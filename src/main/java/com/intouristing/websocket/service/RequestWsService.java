@@ -43,8 +43,8 @@ public class RequestWsService extends RootWsService {
     }
 
     public Request send(RequestDTO requestDTO) {
-        User destination = userRepository.findById(requestDTO.getDestination())
-                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestination()));
+        User destination = userRepository.findById(requestDTO.getDestinationId())
+                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestination().getId()));
         Request request = Request
                 .builder()
                 .sender(super.getUser())
@@ -73,7 +73,7 @@ public class RequestWsService extends RootWsService {
 
         relationshipService.createFriendship(request.getSender(), request.getDestination());
 
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), request.getSender().getUsername());
+        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), null, request.getSender().getUsername());
     }
 
 }
