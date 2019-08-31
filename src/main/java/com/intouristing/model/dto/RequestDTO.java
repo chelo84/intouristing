@@ -22,13 +22,17 @@ public class RequestDTO {
 
     private Long id;
 
-    private UserDTO sender;
-
-    private UserDTO destination;
-
     private Long senderId;
 
+    private String senderName;
+
+    private String senderLastName;
+
     private Long destinationId;
+
+    private String destinationName;
+
+    private String destinationLastName;
 
     private String type;
 
@@ -40,39 +44,33 @@ public class RequestDTO {
 
     public static RequestDTO parseDTO(Request request) {
         if (nonNull(request)) {
-            UserDTO senderDTO = UserDTO.parseDTO(request.getSender()),
-                    destinationDTO = UserDTO.parseDTO(request.getDestination());
-            return RequestDTO
-                    .builder()
-                    .id(request.getId())
-                    .sender(senderDTO)
-                    .destination(destinationDTO)
-                    .senderId(Optional.ofNullable(senderDTO).map(UserDTO::getId).orElse(null))
-                    .destinationId(Optional.ofNullable(destinationDTO).map(UserDTO::getId).orElse(null))
-                    .type(request.getType().name())
-                    .createdAt(request.getCreatedAt())
-                    .acceptedAt(request.getAcceptedAt())
-                    .declinedAt(request.getDeclinedAt())
-                    .build();
+            RequestDTO requestDTO = parseDTO(request.getSender(), request.getDestination(), request.getType());
+            assert nonNull(requestDTO);
+            requestDTO.setId(request.getId());
+            requestDTO.setCreatedAt(request.getCreatedAt());
+            requestDTO.setAcceptedAt(request.getAcceptedAt());
+            requestDTO.setDeclinedAt(request.getDeclinedAt());
+            return requestDTO;
         }
 
         return null;
     }
 
     public static RequestDTO parseDTO(User sender, User destination, RelationshipTypeEnum relationshipType) {
-        if (nonNull(sender) && nonNull(destination) && nonNull(relationshipType)) {
-            UserDTO senderDTO = UserDTO.parseDTO(sender),
-                    destinationDTO = UserDTO.parseDTO(destination);
+        if (nonNull(sender) && nonNull(destination)) {
             return RequestDTO
                     .builder()
-                    .sender(senderDTO)
-                    .destination(destinationDTO)
-                    .senderId(Optional.ofNullable(senderDTO).map(UserDTO::getId).orElse(null))
-                    .destinationId(Optional.ofNullable(destinationDTO).map(UserDTO::getId).orElse(null))
+                    .senderId(Optional.ofNullable(sender.getId()).orElse(null))
+                    .senderName(Optional.ofNullable(sender.getName()).orElse(null))
+                    .senderLastName(Optional.ofNullable(sender.getLastName()).orElse(null))
+                    .destinationId(Optional.ofNullable(destination.getId()).orElse(null))
+                    .destinationName(Optional.ofNullable(destination.getName()).orElse(null))
+                    .destinationLastName(Optional.ofNullable(destination.getLastName()).orElse(null))
                     .type(relationshipType.name())
                     .build();
         }
 
         return null;
     }
+
 }

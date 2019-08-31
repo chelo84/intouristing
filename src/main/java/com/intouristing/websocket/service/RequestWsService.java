@@ -44,7 +44,7 @@ public class RequestWsService extends RootWsService {
 
     public Request send(RequestDTO requestDTO) {
         User destination = userRepository.findById(requestDTO.getDestinationId())
-                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestination().getId()));
+                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestinationId()));
         Request request = Request
                 .builder()
                 .sender(super.getUser())

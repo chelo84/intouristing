@@ -34,7 +34,7 @@ public class RequestWsController {
     }
 
     @MessageMapping(ACCEPT_REQUEST)
-    public void accept(Long requestId) {
+    public void accept(long requestId) {
         requestWsService.accept(requestId);
     }
 }
