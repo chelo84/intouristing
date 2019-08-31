@@ -1,6 +1,6 @@
 package com.intouristing.model.entity;
 
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +28,7 @@ public class Request {
     private User destination;
 
     @Enumerated(EnumType.ORDINAL)
-    private RelationshipTypeEnum type;
+    private RelationshipType type;
 
     private LocalDateTime createdAt;
 

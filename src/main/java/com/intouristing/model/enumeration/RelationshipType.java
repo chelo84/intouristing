@@ -3,19 +3,19 @@ package com.intouristing.model.enumeration;
 /**
  * Created by Marcelo Lacroix on 27/08/19.
  */
-public enum RelationshipTypeEnum {
+public enum RelationshipType {
 
     FRIENDSHIP(0),
     BLOCK(1);
 
     private Integer param;
 
-    RelationshipTypeEnum(Integer param) {
+    RelationshipType(Integer param) {
         this.param = param;
     }
 
     public static Integer get(String key) {
-        for (RelationshipTypeEnum n : RelationshipTypeEnum.values()) {
+        for (RelationshipType n : RelationshipType.values()) {
             if (key.equals(n.name()))
                 return n.param();
         }

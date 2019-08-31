@@ -1,6 +1,6 @@
 package com.intouristing.model.entity;
 
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import com.intouristing.model.key.RelationshipId;
 import lombok.*;
 
@@ -26,7 +26,7 @@ public class Relationship {
     private Long secondUser;
 
     @Enumerated(EnumType.ORDINAL)
-    private RelationshipTypeEnum type;
+    private RelationshipType type;
 
     private LocalDateTime createdAt;
 

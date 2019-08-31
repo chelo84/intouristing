@@ -5,7 +5,7 @@ import com.intouristing.exceptions.RequestNotAcceptableException;
 import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.entity.Request;
 import com.intouristing.model.entity.User;
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import com.intouristing.repository.RelationshipRepository;
 import com.intouristing.repository.RequestRepository;
 import com.intouristing.repository.UserRepository;
@@ -50,7 +50,7 @@ public class RequestWsService extends RootWsService {
                 .sender(super.getUser())
                 .destination(destination)
                 .createdAt(LocalDateTime.now())
-                .type(RelationshipTypeEnum.FRIENDSHIP)
+                .type(RelationshipType.FRIENDSHIP)
                 .build();
 
         requestRepository.save(request);

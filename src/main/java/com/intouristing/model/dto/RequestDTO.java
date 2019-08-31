@@ -2,7 +2,7 @@ package com.intouristing.model.dto;
 
 import com.intouristing.model.entity.Request;
 import com.intouristing.model.entity.User;
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -56,7 +56,7 @@ public class RequestDTO {
         return null;
     }
 
-    public static RequestDTO parseDTO(User sender, User destination, RelationshipTypeEnum relationshipType) {
+    public static RequestDTO parseDTO(User sender, User destination, RelationshipType relationshipType) {
         if (nonNull(sender) && nonNull(destination)) {
             return RequestDTO
                     .builder()

@@ -2,7 +2,7 @@ package com.intouristing.service;
 
 import com.intouristing.model.entity.Relationship;
 import com.intouristing.model.entity.User;
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import com.intouristing.model.key.RelationshipId;
 import com.intouristing.repository.RelationshipRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class RelationshipService extends RootService {
                 .firstUser(relationshipId.getFirstUser())
                 .secondUser(relationshipId.getSecondUser())
                 .createdAt(LocalDateTime.now())
-                .type(RelationshipTypeEnum.FRIENDSHIP)
+                .type(RelationshipType.FRIENDSHIP)
                 .build();
 
         return relationshipRepository.save(relationship);

@@ -5,7 +5,7 @@ import com.intouristing.exceptions.RequestNotAcceptableException;
 import com.intouristing.model.dto.ErrorWsDTO;
 import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.entity.User;
-import com.intouristing.model.enumeration.RelationshipTypeEnum;
+import com.intouristing.model.enumeration.RelationshipType;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class RequestWsServiceTest extends WebSocketTest {
     private RequestDTO getRequestDTO(String destinationToken, String senderToken) {
         User sender = userRepository.findById(TokenService.parseToken(senderToken).getId()).get(),
                 destination = userRepository.findById(TokenService.parseToken(destinationToken).getId()).get();
-        return RequestDTO.parseDTO(sender, destination, RelationshipTypeEnum.FRIENDSHIP);
+        return RequestDTO.parseDTO(sender, destination, RelationshipType.FRIENDSHIP);
     }
 
     @Test
