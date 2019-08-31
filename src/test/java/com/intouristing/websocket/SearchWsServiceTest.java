@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 
+import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static com.intouristing.websocket.messagemapping.SearchMessageMapping.QUEUE_SEARCH;
 import static com.intouristing.websocket.messagemapping.SearchMessageMapping.SEARCH;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -40,9 +41,9 @@ public class SearchWsServiceTest extends WebSocketTest {
         String accessToken = super.login();
         String anotherAccessToken = super.anotherLogin();
         StompHeaders stompHeaders = new StompHeaders();
-        stompHeaders.add("Authorization", accessToken);
+        stompHeaders.add(AUTH_HEADER_STRING, accessToken);
         WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-        webSocketHttpHeaders.add("Authorization", accessToken);
+        webSocketHttpHeaders.add(AUTH_HEADER_STRING, accessToken);
         StompSession session = stompClient
                 .connect(WEBSOCKET_URI, webSocketHttpHeaders, stompHeaders, new StompSessionHandlerAdapter() {
                 })

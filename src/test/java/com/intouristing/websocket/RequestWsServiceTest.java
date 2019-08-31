@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 
+import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static com.intouristing.websocket.messagemapping.RequestMessageMapping.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
@@ -47,9 +48,9 @@ public class RequestWsServiceTest extends WebSocketTest {
     public void shouldSendARequestToAnotherUser() throws Exception {
         String destinationToken = super.login();
         StompHeaders destinationStompHeaders = new StompHeaders();
-        destinationStompHeaders.add("Authorization", destinationToken);
+        destinationStompHeaders.add(AUTH_HEADER_STRING, destinationToken);
         WebSocketHttpHeaders destinationWsHttpHeaders = new WebSocketHttpHeaders();
-        destinationWsHttpHeaders.add("Authorization", destinationToken);
+        destinationWsHttpHeaders.add(AUTH_HEADER_STRING, destinationToken);
         StompSession destinationSession = stompClient
                 .connect(WEBSOCKET_URI, destinationWsHttpHeaders, destinationStompHeaders, new StompSessionHandlerAdapter() {
                 })
@@ -59,9 +60,9 @@ public class RequestWsServiceTest extends WebSocketTest {
 
         String senderToken = super.anotherLogin();
         StompHeaders senderStompHeaders = new StompHeaders();
-        senderStompHeaders.add("Authorization", senderToken);
+        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
         WebSocketHttpHeaders senderWsHttpHeaders = new WebSocketHttpHeaders();
-        senderStompHeaders.add("Authorization", senderToken);
+        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
         StompSession senderSession = anotherStompClient
                 .connect(WEBSOCKET_URI, senderWsHttpHeaders, senderStompHeaders, new StompSessionHandlerAdapter() {
                 })
@@ -82,9 +83,9 @@ public class RequestWsServiceTest extends WebSocketTest {
     public void shouldAcceptRequestAndInformUsers() throws Exception {
         String destinationToken = super.login();
         StompHeaders destinationStompHeaders = new StompHeaders();
-        destinationStompHeaders.add("Authorization", destinationToken);
+        destinationStompHeaders.add(AUTH_HEADER_STRING, destinationToken);
         WebSocketHttpHeaders destinationWsHttpHeaders = new WebSocketHttpHeaders();
-        destinationWsHttpHeaders.add("Authorization", destinationToken);
+        destinationWsHttpHeaders.add(AUTH_HEADER_STRING, destinationToken);
         StompSession destinationSession = stompClient
                 .connect(WEBSOCKET_URI, destinationWsHttpHeaders, destinationStompHeaders, new StompSessionHandlerAdapter() {
                 })
@@ -94,9 +95,9 @@ public class RequestWsServiceTest extends WebSocketTest {
 
         String senderToken = super.anotherLogin();
         StompHeaders senderStompHeaders = new StompHeaders();
-        senderStompHeaders.add("Authorization", senderToken);
+        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
         WebSocketHttpHeaders senderWsHttpHeaders = new WebSocketHttpHeaders();
-        senderWsHttpHeaders.add("Authorization", senderToken);
+        senderWsHttpHeaders.add(AUTH_HEADER_STRING, senderToken);
         StompSession senderSession = anotherStompClient
                 .connect(WEBSOCKET_URI, senderWsHttpHeaders, senderStompHeaders, new StompSessionHandlerAdapter() {
                 })

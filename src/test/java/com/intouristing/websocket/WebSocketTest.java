@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import static com.intouristing.security.SecurityConstants.HEADER_STRING;
+import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -99,7 +99,7 @@ public class WebSocketTest {
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
-                    .getHeader(HEADER_STRING);
+                    .getHeader(AUTH_HEADER_STRING);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -126,7 +126,7 @@ public class WebSocketTest {
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
-                    .getHeader(HEADER_STRING);
+                    .getHeader(AUTH_HEADER_STRING);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
