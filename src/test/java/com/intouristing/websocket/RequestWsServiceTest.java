@@ -1,6 +1,8 @@
 package com.intouristing.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intouristing.exceptions.RequestNotAcceptableException;
+import com.intouristing.model.dto.ErrorWsDTO;
 import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.enumeration.RelationshipTypeEnum;
@@ -51,8 +53,8 @@ public class RequestWsServiceTest extends WebSocketTest {
         String senderToken = super.anotherLogin();
         StompSession senderSession = super.getStompSession(senderToken);
         StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
-        senderStompHeaders.setDestination(WS + REQUEST);
         RequestDTO requestDTO = this.getRequestDTO(destinationToken, senderToken);
+        senderStompHeaders.setDestination(WS + REQUEST);
         senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(requestDTO).getBytes());
 
         RequestDTO receivedRequest = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class);
@@ -76,21 +78,47 @@ public class RequestWsServiceTest extends WebSocketTest {
         senderSession.subscribe(USER + QUEUE_REQUEST, senderStompHandler);
 
         StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
-        senderStompHeaders.setDestination(WS + REQUEST);
         RequestDTO requestDTO = this.getRequestDTO(destinationToken, senderToken);
+        senderStompHeaders.setDestination(WS + REQUEST);
         senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(requestDTO).getBytes());
 
         StompHeaders destinationStompHeaders = super.getStompHeaders(destinationToken);
-        destinationStompHeaders.setDestination(WS + ACCEPT_REQUEST);
         Long requestId = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class).getId();
+        destinationStompHeaders.setDestination(WS + ACCEPT_REQUEST);
         destinationSession.send(destinationStompHeaders, String.valueOf(requestId).getBytes());
         senderStompHandler.blockingQueue.poll(1, SECONDS);
 
-        String poll = senderStompHandler.blockingQueue.poll(1, SECONDS);
-        RequestDTO acceptedRequest = objectMapper.readValue(poll, RequestDTO.class);
+        RequestDTO acceptedRequest = objectMapper.readValue(senderStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class);
         assertNotNull(acceptedRequest);
         assertEquals(TokenService.parseToken(senderToken).getId(), acceptedRequest.getSenderId());
         assertEquals(TokenService.parseToken(destinationToken).getId(), acceptedRequest.getDestinationId());
         assertNotNull(acceptedRequest.getAcceptedAt());
     }
+
+    @Test
+    public void shouldNotBeAnAcceptableRequestBecauseAnotherUserIsTheDestination() throws Exception {
+        String destinationToken = super.login();
+        StompSession destinationSession = super.getStompSession(destinationToken);
+        DefaultStompFrameHandler destinationStompHandler = new DefaultStompFrameHandler();
+        destinationSession.subscribe(USER + QUEUE_REQUEST, destinationStompHandler);
+
+        String senderToken = super.anotherLogin();
+        StompSession senderSession = super.getStompSession(senderToken);
+        DefaultStompFrameHandler senderStompHandler = new DefaultStompFrameHandler();
+        senderSession.subscribe(USER + QUEUE_ERROR, senderStompHandler);
+
+        StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
+        RequestDTO requestDTO = this.getRequestDTO(destinationToken, senderToken);
+        senderStompHeaders.setDestination(WS + REQUEST);
+        senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(requestDTO).getBytes());
+
+        Long requestId = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class).getId();
+        senderStompHeaders.setDestination(WS + ACCEPT_REQUEST);
+        senderSession.send(senderStompHeaders, String.valueOf(requestId).getBytes());
+        var errorWsDTO = objectMapper.readValue(senderStompHandler.blockingQueue.poll(1, SECONDS), ErrorWsDTO.class);
+
+        assertNotNull(errorWsDTO);
+        assertEquals(RequestNotAcceptableException.class.getSimpleName(), errorWsDTO.getException());
+    }
+
 }

@@ -22,4 +22,6 @@ public class ErrorWsDTO {
 
     private String stompCommand;
 
+    private String exception;
+
 }

@@ -4,22 +4,19 @@ import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.model.entity.User;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.account.AccountWsService;
-import org.apache.commons.lang3.ArrayUtils;
+import com.intouristing.websocket.controller.RootWsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.user.SimpSession;
-import org.springframework.messaging.simp.user.SimpSubscription;
-import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -40,26 +37,7 @@ public class RootWsService {
     private SimpUserRegistry simpUserRegistry;
 
     List<String> getUsers(String destination, String... sendToVarargs) {
-        if (isNull(sendToVarargs)) {
-            throw new RuntimeException("user.destination.required");
-        }
-
-        String subDestination = "/user/queue" + destination;
-        Set<SimpSubscription> subscriptionsSet = simpUserRegistry.findSubscriptions((simpSubscription) -> simpSubscription.getDestination().equals(subDestination));
-        SimpSubscription[] subscriptions = subscriptionsSet.toArray(new SimpSubscription[0]);
-        List<String> userList = new ArrayList<>();
-        List<String> sendTo = Arrays.stream(sendToVarargs).map(String::toLowerCase).collect(Collectors.toList());
-        if (ArrayUtils.isNotEmpty(subscriptions)) {
-            userList = Stream.of(subscriptionsSet.toArray(subscriptions))
-                    .map(SimpSubscription::getSession)
-                    .map(SimpSession::getUser)
-                    .map(SimpUser::getName)
-                    .map(String::toLowerCase)
-                    .filter(sendTo::contains)
-                    .collect(Collectors.toList());
-        }
-
-        return userList;
+        return RootWsController.getUsers(destination, simpUserRegistry, Arrays.stream(sendToVarargs), sendToVarargs);
     }
 
     void sendToUser(String destination, Object message, String username) {

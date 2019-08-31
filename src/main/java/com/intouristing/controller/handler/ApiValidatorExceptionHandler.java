@@ -33,24 +33,7 @@ public class ApiValidatorExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        ErrorDTO errorDetails = buildErrorDetails(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
-        log.error(ex.getMessage(), ex);
-        return new ResponseEntity(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    private ErrorDTO buildErrorDetails(Exception ex, WebRequest request, HttpStatus httpStatus) {
-        log.error(ex.getMessage(), ex);
-        String message = getMessage(ex);
-        return new ErrorDTO(LocalDateTime.now(),
-                httpStatus.value(),
-                httpStatus.getReasonPhrase(),
-                message,
-                request.getContextPath());
-    }
-
-    private String getMessage(Exception ex) {
+    public static String getMessage(Exception ex, MessageSource messageSource) {
         String message;
         try {
             RootException rootEx = (RootException) ex;
@@ -63,5 +46,22 @@ public class ApiValidatorExceptionHandler {
             message = messageSource.getMessage(new DefaultMessageSourceResolvable(UNEXPECTED_ERROR), LocaleContextHolder.getLocale());
         }
         return message;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        ErrorDTO errorDetails = buildErrorDetails(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error(ex.getMessage(), ex);
+        return new ResponseEntity(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ErrorDTO buildErrorDetails(Exception ex, WebRequest request, HttpStatus httpStatus) {
+        log.error(ex.getMessage(), ex);
+        String message = getMessage(ex, messageSource);
+        return new ErrorDTO(LocalDateTime.now(),
+                httpStatus.value(),
+                httpStatus.getReasonPhrase(),
+                message,
+                request.getContextPath());
     }
 }

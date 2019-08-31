@@ -48,6 +48,7 @@ public class WebSocketTest {
     String WEBSOCKET_QUEUE = "/queue";
     String WS = "/ws";
     String USER = "/user";
+    String QUEUE_ERROR = "/queue/error";
     WebSocketStompClient stompClient, anotherStompClient;
 
     @Autowired

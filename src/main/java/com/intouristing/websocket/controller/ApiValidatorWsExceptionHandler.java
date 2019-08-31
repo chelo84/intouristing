@@ -1,7 +1,9 @@
 package com.intouristing.websocket.controller;
 
+import com.intouristing.controller.handler.ApiValidatorExceptionHandler;
 import com.intouristing.model.dto.ErrorWsDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -24,6 +26,12 @@ public class ApiValidatorWsExceptionHandler {
     private final String LOOKUP_DESTINATION = "lookupDestination";
     private final String STOMP_COMMAND = "stompCommand";
 
+    private final MessageSource messageSource;
+
+    public ApiValidatorWsExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @MessageExceptionHandler
     @SendToUser("/queue/error")
     public final ErrorWsDTO handleWebSocketExceptions(Exception ex, Message message) {
@@ -36,7 +44,7 @@ public class ApiValidatorWsExceptionHandler {
         log.error(ex.getMessage(), ex);
 
         String lookupDestination = (String) message.getHeaders().get(LOOKUP_DESTINATION),
-                msg = ex.getMessage(),
+                msg = ApiValidatorExceptionHandler.getMessage(ex, messageSource),
                 stompCommand = Optional.ofNullable((StompCommand) message.getHeaders().get(STOMP_COMMAND))
                         .map(StompCommand::getMessageType)
                         .map(SimpMessageType::name)
@@ -48,6 +56,7 @@ public class ApiValidatorWsExceptionHandler {
                 .lookupDestination(lookupDestination)
                 .message(msg)
                 .stompCommand(stompCommand)
+                .exception(ex.getClass().getSimpleName())
                 .build();
     }
 

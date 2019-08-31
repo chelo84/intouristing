@@ -5,10 +5,6 @@ package com.intouristing.exceptions;
  */
 public class RequestNotAcceptableException extends RootException {
 
-    public RequestNotAcceptableException(String customMessage) {
-        super(customMessage);
-    }
-
     public RequestNotAcceptableException() {
         super("request.accept.unauthorized");
     }

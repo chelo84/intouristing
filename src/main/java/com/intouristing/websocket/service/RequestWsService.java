@@ -59,7 +59,7 @@ public class RequestWsService extends RootWsService {
         return request;
     }
 
-    public void accept(Long requestId) {
+    public void accept(Long requestId) throws Exception {
         Optional<Request> optRequest = requestRepository.findById(requestId);
         optRequest
                 .map(Request::getDestination)
