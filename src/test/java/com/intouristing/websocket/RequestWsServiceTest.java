@@ -13,12 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 
-import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static com.intouristing.websocket.messagemapping.RequestMessageMapping.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
@@ -34,9 +31,9 @@ import static org.junit.Assert.assertNotNull;
 public class RequestWsServiceTest extends WebSocketTest {
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
 
     private RequestDTO getRequestDTO(String destinationToken, String senderToken) {
         User sender = userRepository.findById(TokenService.parseToken(senderToken).getId()).get(),
@@ -47,27 +44,13 @@ public class RequestWsServiceTest extends WebSocketTest {
     @Test
     public void shouldSendARequestToAnotherUser() throws Exception {
         String destinationToken = super.login();
-        StompHeaders destinationStompHeaders = new StompHeaders();
-        destinationStompHeaders.add(AUTH_HEADER_STRING, destinationToken);
-        WebSocketHttpHeaders destinationWsHttpHeaders = new WebSocketHttpHeaders();
-        destinationWsHttpHeaders.add(AUTH_HEADER_STRING, destinationToken);
-        StompSession destinationSession = stompClient
-                .connect(WEBSOCKET_URI, destinationWsHttpHeaders, destinationStompHeaders, new StompSessionHandlerAdapter() {
-                })
-                .get(1, SECONDS);
+        StompSession destinationSession = super.getStompSession(destinationToken);
         DefaultStompFrameHandler destinationStompHandler = new DefaultStompFrameHandler();
         destinationSession.subscribe(USER + QUEUE_REQUEST, destinationStompHandler);
 
         String senderToken = super.anotherLogin();
-        StompHeaders senderStompHeaders = new StompHeaders();
-        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
-        WebSocketHttpHeaders senderWsHttpHeaders = new WebSocketHttpHeaders();
-        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
-        StompSession senderSession = anotherStompClient
-                .connect(WEBSOCKET_URI, senderWsHttpHeaders, senderStompHeaders, new StompSessionHandlerAdapter() {
-                })
-                .get(10, SECONDS);
-
+        StompSession senderSession = super.getStompSession(senderToken);
+        StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
         senderStompHeaders.setDestination(WS + REQUEST);
         RequestDTO requestDTO = this.getRequestDTO(destinationToken, senderToken);
         senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(requestDTO).getBytes());
@@ -79,36 +62,25 @@ public class RequestWsServiceTest extends WebSocketTest {
         assertEquals(TokenService.parseToken(destinationToken).getId(), receivedRequest.getDestinationId());
     }
 
+
     @Test
     public void shouldAcceptRequestAndInformUsers() throws Exception {
         String destinationToken = super.login();
-        StompHeaders destinationStompHeaders = new StompHeaders();
-        destinationStompHeaders.add(AUTH_HEADER_STRING, destinationToken);
-        WebSocketHttpHeaders destinationWsHttpHeaders = new WebSocketHttpHeaders();
-        destinationWsHttpHeaders.add(AUTH_HEADER_STRING, destinationToken);
-        StompSession destinationSession = stompClient
-                .connect(WEBSOCKET_URI, destinationWsHttpHeaders, destinationStompHeaders, new StompSessionHandlerAdapter() {
-                })
-                .get(1, SECONDS);
+        StompSession destinationSession = super.getStompSession(destinationToken);
         DefaultStompFrameHandler destinationStompHandler = new DefaultStompFrameHandler();
         destinationSession.subscribe(USER + QUEUE_REQUEST, destinationStompHandler);
 
         String senderToken = super.anotherLogin();
-        StompHeaders senderStompHeaders = new StompHeaders();
-        senderStompHeaders.add(AUTH_HEADER_STRING, senderToken);
-        WebSocketHttpHeaders senderWsHttpHeaders = new WebSocketHttpHeaders();
-        senderWsHttpHeaders.add(AUTH_HEADER_STRING, senderToken);
-        StompSession senderSession = anotherStompClient
-                .connect(WEBSOCKET_URI, senderWsHttpHeaders, senderStompHeaders, new StompSessionHandlerAdapter() {
-                })
-                .get(1, SECONDS);
+        StompSession senderSession = super.getStompSession(senderToken);
         DefaultStompFrameHandler senderStompHandler = new DefaultStompFrameHandler();
         senderSession.subscribe(USER + QUEUE_REQUEST, senderStompHandler);
 
+        StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
         senderStompHeaders.setDestination(WS + REQUEST);
         RequestDTO requestDTO = this.getRequestDTO(destinationToken, senderToken);
         senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(requestDTO).getBytes());
 
+        StompHeaders destinationStompHeaders = super.getStompHeaders(destinationToken);
         destinationStompHeaders.setDestination(WS + ACCEPT_REQUEST);
         Long requestId = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class).getId();
         destinationSession.send(destinationStompHeaders, String.valueOf(requestId).getBytes());

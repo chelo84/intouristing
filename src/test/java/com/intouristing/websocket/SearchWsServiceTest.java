@@ -12,12 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 
-import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static com.intouristing.websocket.messagemapping.SearchMessageMapping.QUEUE_SEARCH;
 import static com.intouristing.websocket.messagemapping.SearchMessageMapping.SEARCH;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -40,17 +37,11 @@ public class SearchWsServiceTest extends WebSocketTest {
     public void shouldReceiveUsersAfterSearch() throws Exception {
         String accessToken = super.login();
         String anotherAccessToken = super.anotherLogin();
-        StompHeaders stompHeaders = new StompHeaders();
-        stompHeaders.add(AUTH_HEADER_STRING, accessToken);
-        WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-        webSocketHttpHeaders.add(AUTH_HEADER_STRING, accessToken);
-        StompSession session = stompClient
-                .connect(WEBSOCKET_URI, webSocketHttpHeaders, stompHeaders, new StompSessionHandlerAdapter() {
-                })
-                .get(1, SECONDS);
+        StompSession session = super.getStompSession(accessToken);
         DefaultStompFrameHandler stompHandler = new DefaultStompFrameHandler();
         session.subscribe(USER + QUEUE_SEARCH, stompHandler);
 
+        StompHeaders stompHeaders = super.getStompHeaders(accessToken);
         stompHeaders.setDestination(WS + SEARCH);
         String message = "10";
         session.send(stompHeaders, message.getBytes());

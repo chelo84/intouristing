@@ -26,11 +26,11 @@ import static org.junit.Assert.assertTrue;
 public class RelationshipServiceTest {
 
     @Autowired
-    private UtilService utilService;
+    UtilService utilService;
     @Autowired
-    private UserService userService;
+    UserService userService;
     @Autowired
-    private RelationshipService relationshipService;
+    RelationshipService relationshipService;
 
     @Test
     public void shouldCreateRelationshipOfTypeFriendship() {
