@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.intouristing.security.SecurityConstants.HEADER_STRING;
+import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,7 +55,7 @@ public class JWTAuthTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String accessToken = mvcResult.getResponse().getHeader(HEADER_STRING);
+        String accessToken = mvcResult.getResponse().getHeader(AUTH_HEADER_STRING);
 
         assertNotNull(accessToken);
         assertTrue(StringUtils.isNotEmpty(accessToken));
@@ -72,9 +72,9 @@ public class JWTAuthTests {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
-                .getHeader(HEADER_STRING);
+                .getHeader(AUTH_HEADER_STRING);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/users/1").header(HEADER_STRING, accessToken))
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/users/1").header(AUTH_HEADER_STRING, accessToken))
                 .andExpect(status().isOk())
                 .andReturn();
 

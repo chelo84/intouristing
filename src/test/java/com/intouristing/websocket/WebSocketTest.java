@@ -5,6 +5,7 @@ import com.intouristing.model.dto.UserPositionDTO;
 import com.intouristing.service.UserService;
 import com.intouristing.service.UtilService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +13,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
-import static com.intouristing.security.SecurityConstants.HEADER_STRING;
+import static com.intouristing.security.SecurityConstants.AUTH_HEADER_STRING;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,9 +48,8 @@ public class WebSocketTest {
     String WEBSOCKET_QUEUE = "/queue";
     String WS = "/ws";
     String USER = "/user";
-
-    BlockingQueue<String> blockingQueue;
-    WebSocketStompClient stompClient;
+    String QUEUE_ERROR = "/queue/error";
+    WebSocketStompClient stompClient, anotherStompClient;
 
     @Autowired
     private UserService userService;
@@ -48,6 +57,14 @@ public class WebSocketTest {
     private MockMvc mockMvc;
     @Autowired
     private UtilService utilService;
+
+    @Before
+    public void setup() {
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+        anotherStompClient = new WebSocketStompClient(new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+    }
 
     @Test
     public void webSocketTest() {
@@ -88,7 +105,7 @@ public class WebSocketTest {
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
-                    .getHeader(HEADER_STRING);
+                    .getHeader(AUTH_HEADER_STRING);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -115,7 +132,7 @@ public class WebSocketTest {
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
-                    .getHeader(HEADER_STRING);
+                    .getHeader(AUTH_HEADER_STRING);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -123,7 +140,30 @@ public class WebSocketTest {
         return null;
     }
 
+    StompHeaders getStompHeaders(String userToken) {
+        StompHeaders stompHeaders = new StompHeaders();
+        stompHeaders.add(AUTH_HEADER_STRING, userToken);
+        return stompHeaders;
+    }
+
+    StompSession getStompSession(String userToken) throws InterruptedException, java.util.concurrent.ExecutionException, java.util.concurrent.TimeoutException {
+        StompHeaders stompHeaders = getStompHeaders(userToken);
+        WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+        webSocketHttpHeaders.add(AUTH_HEADER_STRING, userToken);
+        return stompClient
+                .connect(WEBSOCKET_URI, webSocketHttpHeaders, stompHeaders, new StompSessionHandlerAdapter() {
+                })
+                .get(1, SECONDS);
+    }
+
     class DefaultStompFrameHandler implements StompFrameHandler {
+
+        BlockingQueue<String> blockingQueue;
+
+        public DefaultStompFrameHandler() {
+            this.blockingQueue = (new LinkedBlockingDeque<>());
+        }
+
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
             return byte[].class;
@@ -134,4 +174,5 @@ public class WebSocketTest {
             blockingQueue.offer(new String((byte[]) o));
         }
     }
+
 }

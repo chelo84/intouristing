@@ -2,8 +2,6 @@ package com.intouristing.websocket.service;
 
 import com.intouristing.model.entity.User;
 import com.intouristing.repository.UserPositionRepository;
-import com.intouristing.repository.UserRepository;
-import com.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +14,12 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class UserWsService extends RootWsService {
+public class SearchWsService extends RootWsService {
 
-    private final UserRepository userRepository;
-    private final AccountWsService accountWsService;
     private final UserPositionRepository userPositionRepository;
 
     @Autowired
-    public UserWsService(UserRepository userRepository, AccountWsService accountWsService, UserPositionRepository userPositionRepository) {
-        this.userRepository = userRepository;
-        this.accountWsService = accountWsService;
+    public SearchWsService(UserPositionRepository userPositionRepository) {
         this.userPositionRepository = userPositionRepository;
     }
 

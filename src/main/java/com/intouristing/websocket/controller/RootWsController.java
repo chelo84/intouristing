@@ -29,7 +29,7 @@ public class RootWsController {
     @Autowired
     private SimpUserRegistry simpUserRegistry;
 
-    List<String> getUsers(String destination, String... sendToVarargs) {
+    public static List<String> getUsers(String destination, SimpUserRegistry simpUserRegistry, Stream<String> stream, String[] sendToVarargs) {
         if (isNull(sendToVarargs)) {
             throw new RuntimeException("user.destination.required");
         }
@@ -38,7 +38,7 @@ public class RootWsController {
         Set<SimpSubscription> subscriptionsSet = simpUserRegistry.findSubscriptions((simpSubscription) -> simpSubscription.getDestination().equals(subDestination));
         SimpSubscription[] subscriptions = subscriptionsSet.toArray(new SimpSubscription[0]);
         List<String> userList = new ArrayList<>();
-        List<String> sendTo = Arrays.stream(sendToVarargs).map(String::toLowerCase).collect(Collectors.toList());
+        List<String> sendTo = stream.map(String::toLowerCase).collect(Collectors.toList());
         if (ArrayUtils.isNotEmpty(subscriptions)) {
             userList = Stream.of(subscriptionsSet.toArray(subscriptions))
                     .map(SimpSubscription::getSession)
@@ -50,6 +50,10 @@ public class RootWsController {
         }
 
         return userList;
+    }
+
+    List<String> getUsers(String destination, String... sendToVarargs) {
+        return getUsers(destination, simpUserRegistry, Arrays.stream(sendToVarargs), sendToVarargs);
     }
 
     void sendToUser(String destination, Object message, String username) {

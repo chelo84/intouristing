@@ -71,7 +71,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("username", user.getUsername())
                 .withClaim("email", user.getEmail())
                 .sign(HMAC512(SECRET.getBytes()));
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        response.addHeader(AUTH_HEADER_STRING, TOKEN_PREFIX + token);
     }
 
 }

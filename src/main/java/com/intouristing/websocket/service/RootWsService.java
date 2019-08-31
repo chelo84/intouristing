@@ -4,12 +4,20 @@ import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.model.entity.User;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.account.AccountWsService;
+import com.intouristing.websocket.controller.RootWsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Created by Marcelo Lacroix on 17/08/2019.
@@ -18,11 +26,51 @@ import java.util.Locale;
 public class RootWsService {
 
     @Autowired
+    SimpMessageSendingOperations messagingTemplate;
+    @Autowired
     private MessageSource messageSource;
     @Autowired
     private AccountWsService accountWsService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SimpUserRegistry simpUserRegistry;
+
+    List<String> getUsers(String destination, String... sendToVarargs) {
+        return RootWsController.getUsers(destination, simpUserRegistry, Arrays.stream(sendToVarargs), sendToVarargs);
+    }
+
+    void sendToUser(String destination, Object message, String username) {
+        messagingTemplate.convertAndSendToUser(
+                username,
+                "/queue/" + destination,
+                message
+        );
+    }
+
+    void send(String destination, Object message) {
+        messagingTemplate.convertAndSend(destination, message);
+    }
+
+    void sendToAnotherUser(String destination, Object message, String sentBy, String... usernames) {
+        for (String username : usernames) {
+            messagingTemplate.convertAndSendToUser(
+                    username,
+                    "/queue/" + destination,
+                    message,
+                    nonNull(sentBy) ? Map.of("SentBy", sentBy) : null
+            );
+        }
+    }
+
+    void sendToAnotherUser(String destination, Object message, String sentBy, List<String> usernames) {
+        this.sendToAnotherUser(
+                destination,
+                message,
+                sentBy,
+                usernames.toArray(new String[0])
+        );
+    }
 
     public String getMessage(String message, Locale locale) {
         return messageSource.getMessage(new DefaultMessageSourceResolvable(message), locale);

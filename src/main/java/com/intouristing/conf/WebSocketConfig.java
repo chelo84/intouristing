@@ -66,7 +66,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                String token = Optional.ofNullable(accessor.getNativeHeader(HEADER_STRING))
+                String token = Optional.ofNullable(accessor.getNativeHeader(AUTH_HEADER_STRING))
                         .map(list -> list.stream().findFirst().orElse(null))
                         .orElse(null);
                 String username = null;

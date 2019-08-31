@@ -2,7 +2,6 @@ package com.intouristing.service;
 
 import com.intouristing.model.dto.UserDTO;
 import com.intouristing.model.dto.UserPositionDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -13,9 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("webSocketTest")
 public class UtilService {
 
-    @Autowired
-    UserService userService;
-
     public UserDTO buildUserDTO() {
         return UserDTO
                 .builder()
@@ -25,6 +21,18 @@ public class UtilService {
                 .email("test_email@hotmail.com")
                 .name("nameTest")
                 .lastName("nameLastname")
+                .build();
+    }
+
+    public UserDTO buildAnotherUserDTO() {
+        return UserDTO
+                .builder()
+                .username("secondUsername")
+                .password("secondPassword")
+                .userPosition(buildUserPositionDTO())
+                .email("secondEmail@hotmail.com")
+                .name("secondName")
+                .lastName("secondLastname")
                 .build();
     }
 

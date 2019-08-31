@@ -8,16 +8,16 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class RootException extends RuntimeException {
+public abstract class RootException extends RuntimeException {
 
     private String customMessage;
     private String[] params;
 
-    public RootException(String customMessage) {
+    RootException(String customMessage) {
         this.customMessage = customMessage;
     }
 
-    public RootException(String customMessage, String... params) {
+    RootException(String customMessage, String... params) {
         this.customMessage = customMessage;
         this.params = params;
     }
