@@ -34,11 +34,10 @@ import static org.mockito.Mockito.when;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MessageServiceTest {
 
+    private static final String MESSAGE_TEXT = "My message text";
     private final Long USER_ID = 1L;
     private final Long ANOTHER_USER_ID = 2L;
     private final Long GROUP_ID = 3L;
-    private final String MESSAGE_TEXT = "My message text";
-
     @Autowired
     MessageService messageService;
     @Autowired
@@ -46,16 +45,21 @@ public class MessageServiceTest {
     @MockBean(name = "chatGroupRepository")
     ChatGroupRepository chatGroupRepository;
 
-    @Test
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void shouldCreatePrivateChatMessage() {
-        SendMessageDTO sendMessageDTO = SendMessageDTO
+    public static SendMessageDTO getSendMessageDTO(Long userToSend, boolean isGroup, Long groupChat) {
+        return SendMessageDTO
                 .builder()
                 .text(MESSAGE_TEXT)
                 .hash(UUID.randomUUID().toString())
-                .sendTo(ANOTHER_USER_ID)
-                .isGroup(false)
+                .sendTo(userToSend)
+                .isGroup(isGroup)
+                .chatGroup(groupChat)
                 .build();
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void shouldCreatePrivateChatMessage() {
+        SendMessageDTO sendMessageDTO = getSendMessageDTO(ANOTHER_USER_ID, false, null);
         var message = messageService.createMessage(sendMessageDTO, USER_ID);
         message = messageRepository.findById(message.getId()).orElse(null);
 
@@ -70,14 +74,9 @@ public class MessageServiceTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void shouldCreateGroupChatMessage() {
-        SendMessageDTO sendMessageDTO = SendMessageDTO
-                .builder()
-                .text(MESSAGE_TEXT)
-                .hash(UUID.randomUUID().toString())
-                .chatGroup(GROUP_ID)
-                .isGroup(true)
-                .build();
-        var mockedUser = User.builder().id(USER_ID).build();
+        SendMessageDTO sendMessageDTO = getSendMessageDTO(ANOTHER_USER_ID, true, GROUP_ID);
+
+        var mockedUser = User.builder().id(ANOTHER_USER_ID).build();
         var mockedChatGroup = ChatGroup
                 .builder()
                 .id(sendMessageDTO.getChatGroup())
@@ -91,7 +90,7 @@ public class MessageServiceTest {
         assertNotNull(message.getId());
         assertEquals(message.getText(), sendMessageDTO.getText());
         assertThat(message.getSentTo(), containsInAnyOrder(mockedUser.getId()));
-        assertEquals(message.getIsGroup(), sendMessageDTO.getIsGroup());
+        assertEquals(Boolean.TRUE, sendMessageDTO.getIsGroup());
         assertNotNull(sendMessageDTO.getHash());
     }
 

@@ -7,6 +7,7 @@ import com.intouristing.model.key.RelationshipId;
 import com.intouristing.repository.RelationshipRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -14,13 +15,16 @@ import java.time.LocalDateTime;
  * Created by Marcelo Lacroix on 28/08/19.
  */
 @Slf4j
+@Transactional
 @Service
 public class RelationshipService extends RootService {
 
     private final RelationshipRepository relationshipRepository;
+    private final ChatService chatService;
 
-    public RelationshipService(RelationshipRepository relationshipRepository) {
+    public RelationshipService(RelationshipRepository relationshipRepository, ChatService chatService) {
         this.relationshipRepository = relationshipRepository;
+        this.chatService = chatService;
     }
 
     public Relationship createFriendship(User firstUser, User secondUser) {
@@ -33,10 +37,12 @@ public class RelationshipService extends RootService {
                 .type(RelationshipType.FRIENDSHIP)
                 .build();
 
+        chatService.createPrivateChat(relationshipId.getFirstUser(), relationshipId.getSecondUser());
+
         return relationshipRepository.save(relationship);
     }
 
     RelationshipId createRelationshipId(Long firstUser, Long secondUser) {
-        return (firstUser < secondUser) ? new RelationshipId(firstUser, secondUser) : new RelationshipId(secondUser, firstUser);
+        return new RelationshipId(Math.min(firstUser, secondUser), Math.max(firstUser, secondUser));
     }
 }

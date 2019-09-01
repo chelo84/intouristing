@@ -48,7 +48,7 @@ public class RelationshipServiceTest {
     }
 
     @Test
-    public void shouldCreateRelationshipIdWithFirstUserIdBeingGreaterThanSecondUserId() {
+    public void shouldCreateRelationshipIdWithSecondUserIdBeingGreaterThanFirstUserId() {
         UserDTO userDTO1 = utilService.buildUserDTO();
         UserDTO userDTO2 = utilService.buildAnotherUserDTO();
 

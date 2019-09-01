@@ -18,6 +18,7 @@ public interface MessageMappings {
 
     interface Chat {
         String MESSAGE = "/message";
+        String QUEUE_MESSAGE = "/queue" + MESSAGE;
     }
 
 }
