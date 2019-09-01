@@ -46,6 +46,7 @@ public class ChatService extends RootService {
         return chatGroupRepository.save(chatGroup);
     }
 
+    @Transactional(readOnly = true)
     public ChatGroup findChatGroup(Long chatGroupId) {
         return chatGroupRepository.findById(chatGroupId)
                 .orElseThrow(() -> new NotFoundException(ChatGroup.class, chatGroupId));
@@ -77,6 +78,7 @@ public class ChatService extends RootService {
         return privateChatRepository.save(privateChat);
     }
 
+    @Transactional(readOnly = true)
     public PrivateChat findPrivateChat(Long firstUser, Long secondUser) {
         return privateChatRepository.findById(new PrivateChatId(Math.min(firstUser, secondUser), Math.max(firstUser, secondUser)))
                 .orElseThrow(() -> new NotFoundException(ChatGroup.class, firstUser, secondUser));
