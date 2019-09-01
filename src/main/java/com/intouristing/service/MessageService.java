@@ -6,6 +6,8 @@ import com.intouristing.model.entity.ChatGroup;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
 import com.intouristing.repository.ChatGroupRepository;
+import com.intouristing.repository.mongo.MessageRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,10 +24,12 @@ import java.util.stream.Collectors;
 public class MessageService extends RootService {
 
     private final ChatGroupRepository chatGroupRepository;
+    private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(ChatGroupRepository chatGroupRepository) {
+    public MessageService(ChatGroupRepository chatGroupRepository, MessageRepository messageRepository) {
         this.chatGroupRepository = chatGroupRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -45,7 +49,6 @@ public class MessageService extends RootService {
                     .orElseThrow(() -> new NotFoundException(ChatGroup.class, sendMessageDTO.getChatGroup()))
                     .getUsers();
             message.setSentTo(usersToSendMessage.stream().map(User::getId).collect(Collectors.toList()));
-            return message;
         } else {
             message = Message
                     .builder()
@@ -56,8 +59,9 @@ public class MessageService extends RootService {
                     .isGroup(false)
                     .build();
         }
+        message.setId(new ObjectId());
 
-        return message;
+        return messageRepository.save(message);
     }
 
 }

@@ -1,15 +1,13 @@
 package com.intouristing.model.dto.mongo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by Marcelo Lacroix on 31/08/2019.
  */
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendMessageDTO {

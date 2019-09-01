@@ -1,6 +1,7 @@
 package com.intouristing.model.entity.mongo;
 
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import java.util.List;
 public class Message {
 
     @Id
-    private String id;
+    private ObjectId id;
 
     private Long chatGroup;
 

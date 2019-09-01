@@ -46,7 +46,7 @@ public class MessageDTO {
         if (nonNull(message)) {
             return MessageDTO
                     .builder()
-                    .id(message.getId())
+                    .id(message.getId().toString())
                     .chatGroup(message.getChatGroup())
                     .text(message.getText())
                     .sentBy(message.getSentBy())
