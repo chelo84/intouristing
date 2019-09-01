@@ -15,9 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import static java.util.Objects.nonNull;
 
 /**
  * Created by Marcelo Lacroix on 17/08/2019.
@@ -52,22 +49,20 @@ public class RootWsService {
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    void sendToAnotherUser(String destination, Object message, String sentBy, String... usernames) {
+    void sendToAnotherUser(String destination, Object message, String... usernames) {
         for (String username : usernames) {
             messagingTemplate.convertAndSendToUser(
                     username,
                     "/queue/" + destination,
-                    message,
-                    nonNull(sentBy) ? Map.of("SentBy", sentBy) : null
+                    message
             );
         }
     }
 
-    void sendToAnotherUser(String destination, Object message, String sentBy, List<String> usernames) {
+    void sendToAnotherUser(String destination, Object message, List<String> usernames) {
         this.sendToAnotherUser(
                 destination,
                 message,
-                sentBy,
                 usernames.toArray(new String[0])
         );
     }

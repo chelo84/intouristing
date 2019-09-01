@@ -16,4 +16,8 @@ public interface MessageMappings {
         String QUEUE_SEARCH = "/queue" + SEARCH;
     }
 
+    interface Chat {
+        String MESSAGE = "/message";
+    }
+
 }

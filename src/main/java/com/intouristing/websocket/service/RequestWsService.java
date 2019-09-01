@@ -6,7 +6,6 @@ import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.entity.Request;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.enumeration.RelationshipType;
-import com.intouristing.repository.RelationshipRepository;
 import com.intouristing.repository.RequestRepository;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.RelationshipService;
@@ -31,14 +30,12 @@ public class RequestWsService extends RootWsService {
 
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
-    private final RelationshipRepository relationshipRepository;
     private final RelationshipService relationshipService;
 
     @Autowired
-    public RequestWsService(UserRepository userRepository, RequestRepository requestRepository, RelationshipRepository relationshipRepository, RelationshipService relationshipService) {
+    public RequestWsService(UserRepository userRepository, RequestRepository requestRepository, RelationshipService relationshipService) {
         this.userRepository = userRepository;
         this.requestRepository = requestRepository;
-        this.relationshipRepository = relationshipRepository;
         this.relationshipService = relationshipService;
     }
 
@@ -54,7 +51,7 @@ public class RequestWsService extends RootWsService {
                 .build();
 
         requestRepository.save(request);
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), null, destination.getUsername());
+        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), destination.getUsername());
 
         return request;
     }
@@ -73,7 +70,7 @@ public class RequestWsService extends RootWsService {
 
         relationshipService.createFriendship(request.getSender(), request.getDestination());
 
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), null, request.getSender().getUsername());
+        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), request.getSender().getUsername());
     }
 
 }
