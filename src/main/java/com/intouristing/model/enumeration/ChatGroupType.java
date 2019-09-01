@@ -5,9 +5,8 @@ package com.intouristing.model.enumeration;
  */
 public enum ChatGroupType {
 
-    PRIVATE(0),
-    GROUP_PRIVATE(1),
-    GROUP_PUBLIC(2);
+    GROUP_PRIVATE(0),
+    GROUP_PUBLIC(1);
 
     private Integer param;
 

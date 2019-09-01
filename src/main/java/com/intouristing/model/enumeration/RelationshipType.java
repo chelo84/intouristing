@@ -25,4 +25,5 @@ public enum RelationshipType {
     public Integer param() {
         return param;
     }
+
 }

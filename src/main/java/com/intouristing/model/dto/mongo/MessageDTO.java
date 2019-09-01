@@ -34,6 +34,8 @@ public class MessageDTO {
 
     private Boolean readByAll = false;
 
+    private Boolean isGroup;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -51,6 +53,7 @@ public class MessageDTO {
                     .sentTo(message.getSentTo())
                     .readBy(emptyIfNull(message.getReadBy()).stream().map(ReadByDTO::parseDTO).collect(Collectors.toList()))
                     .readByAll(message.getReadByAll())
+                    .isGroup(message.getIsGroup())
                     .createdAt(message.getCreatedAt())
                     .updatedAt(message.getUpdatedAt())
                     .excludedAt(message.getExcludedAt())

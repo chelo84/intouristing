@@ -31,6 +31,8 @@ public class Message {
 
     private Boolean readByAll = false;
 
+    private Boolean isGroup;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
