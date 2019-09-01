@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.intouristing.websocket.messagemapping.RequestMessageMapping.REQUEST;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Request.REQUEST;
 
 /**
  * Created by Marcelo Lacroix on 27/08/2019.

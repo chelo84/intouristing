@@ -18,7 +18,7 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.intouristing.websocket.messagemapping.RequestMessageMapping.*;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Request.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
