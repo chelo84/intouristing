@@ -1,5 +1,6 @@
 package com.intouristing.model.entity.mongo;
 
+import com.intouristing.model.entity.PrivateChat;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -39,5 +40,7 @@ public class Message {
     private LocalDateTime updatedAt;
 
     private LocalDateTime excludedAt;
+
+    private PrivateChat privateChat;
 
 }

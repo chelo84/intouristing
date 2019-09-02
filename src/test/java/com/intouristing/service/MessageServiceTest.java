@@ -3,6 +3,7 @@ package com.intouristing.service;
 import com.intouristing.Application;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
 import com.intouristing.model.entity.ChatGroup;
+import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
 import com.intouristing.repository.ChatGroupRepository;
 import com.intouristing.repository.mongo.MessageRepository;
@@ -42,8 +43,10 @@ public class MessageServiceTest {
     MessageService messageService;
     @Autowired
     MessageRepository messageRepository;
-    @MockBean(name = "chatGroupRepository")
+    @MockBean
     ChatGroupRepository chatGroupRepository;
+    @MockBean
+    ChatService chatService;
 
     public static SendMessageDTO getSendMessageDTO(Long userToSend, boolean isGroup, Long groupChat) {
         return SendMessageDTO
@@ -60,6 +63,7 @@ public class MessageServiceTest {
     @Transactional(propagation = Propagation.REQUIRED)
     public void shouldCreatePrivateChatMessage() {
         SendMessageDTO sendMessageDTO = getSendMessageDTO(ANOTHER_USER_ID, false, null);
+        when(chatService.findPrivateChat(USER_ID, sendMessageDTO.getSendTo())).thenReturn(PrivateChat.builder().firstUser(USER_ID).secondUser(ANOTHER_USER_ID).build());
         var message = messageService.createMessage(sendMessageDTO, USER_ID);
         message = messageRepository.findById(message.getId()).orElse(null);
 
@@ -69,6 +73,8 @@ public class MessageServiceTest {
         assertThat(message.getSentTo(), containsInAnyOrder(sendMessageDTO.getSendTo()));
         assertEquals(message.getIsGroup(), sendMessageDTO.getIsGroup());
         assertNotNull(sendMessageDTO.getHash());
+        assertNotNull(message.getPrivateChat());
+        assertTrue(message.getPrivateChat().getFirstUser() < message.getPrivateChat().getSecondUser());
     }
 
     @Test

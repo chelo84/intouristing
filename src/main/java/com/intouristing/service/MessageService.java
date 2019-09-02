@@ -3,6 +3,7 @@ package com.intouristing.service;
 import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
 import com.intouristing.model.entity.ChatGroup;
+import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
 import com.intouristing.repository.ChatGroupRepository;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -24,11 +26,13 @@ import java.util.stream.Collectors;
 public class MessageService extends RootService {
 
     private final ChatGroupRepository chatGroupRepository;
+    private final ChatService chatService;
     private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(ChatGroupRepository chatGroupRepository, MessageRepository messageRepository) {
+    public MessageService(ChatGroupRepository chatGroupRepository, ChatService chatService, MessageRepository messageRepository) {
         this.chatGroupRepository = chatGroupRepository;
+        this.chatService = chatService;
         this.messageRepository = messageRepository;
     }
 
@@ -57,6 +61,8 @@ public class MessageService extends RootService {
                     .createdAt(LocalDateTime.now())
                     .sentTo(Collections.singletonList(sendMessageDTO.getSendTo()))
                     .isGroup(false)
+                    .privateChat(Optional.ofNullable(chatService.findPrivateChat(sentBy, sendMessageDTO.getSendTo()))
+                            .orElseThrow(() -> new NotFoundException(PrivateChat.class, sentBy, sendMessageDTO.getSendTo())))
                     .build();
         }
         message.setId(new ObjectId());

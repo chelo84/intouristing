@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -40,17 +41,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class WebSocketTest {
 
-    String WEBSOCKET_URI = "http://localhost:8080/sockjs";
+    String WEBSOCKET_URI = "/sockjs";
     String WEBSOCKET_TOPIC = "/topic";
     String WEBSOCKET_QUEUE = "/queue";
     String WS = "/ws";
     String USER = "/user";
     String QUEUE_ERROR = "/queue/error";
     WebSocketStompClient stompClient, anotherStompClient;
+
+    @LocalServerPort
+    int randomServerPort;
 
     @Autowired
     private UserService userService;
@@ -153,7 +157,7 @@ public class WebSocketTest {
         webSocketHttpHeaders.add(AUTH_HEADER_STRING, userToken);
         webSocketHttpHeaders.add(ACCEPT_LANGUAGE, "pt-BR");
         return stompClient
-                .connect(WEBSOCKET_URI, webSocketHttpHeaders, stompHeaders, new StompSessionHandlerAdapter() {
+                .connect("http://localhost:" + randomServerPort + WEBSOCKET_URI, webSocketHttpHeaders, stompHeaders, new StompSessionHandlerAdapter() {
                 })
                 .get(1, SECONDS);
     }
