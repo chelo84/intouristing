@@ -18,7 +18,7 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.intouristing.websocket.messagemapping.RequestMessageMapping.*;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Request.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RequestWsServiceTest extends WebSocketTest {
 

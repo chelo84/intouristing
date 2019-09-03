@@ -10,7 +10,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.intouristing.websocket.messagemapping.RequestMessageMapping.*;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Request.*;
 
 /**
  * Created by Marcelo Lacroix on 27/08/2019.

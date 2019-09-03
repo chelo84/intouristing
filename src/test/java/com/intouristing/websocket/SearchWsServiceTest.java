@@ -15,8 +15,8 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.intouristing.websocket.messagemapping.SearchMessageMapping.QUEUE_SEARCH;
-import static com.intouristing.websocket.messagemapping.SearchMessageMapping.SEARCH;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Search.QUEUE_SEARCH;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Search.SEARCH;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -24,7 +24,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class SearchWsServiceTest extends WebSocketTest {
 

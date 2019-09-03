@@ -1,21 +1,21 @@
 package com.intouristing.model.enumeration;
 
 /**
- * Created by Marcelo Lacroix on 27/08/19.
+ * Created by Marcelo Lacroix on 31/08/2019.
  */
-public enum RelationshipType {
+public enum ChatGroupType {
 
-    FRIENDSHIP(0),
-    BLOCK(1);
+    GROUP_PRIVATE(0),
+    GROUP_PUBLIC(1);
 
     private Integer param;
 
-    RelationshipType(Integer param) {
+    ChatGroupType(Integer param) {
         this.param = param;
     }
 
     public static Integer get(String key) {
-        for (RelationshipType n : RelationshipType.values()) {
+        for (ChatGroupType n : ChatGroupType.values()) {
             if (key.equals(n.name()))
                 return n.param();
         }
@@ -25,5 +25,4 @@ public enum RelationshipType {
     public Integer param() {
         return param;
     }
-
 }

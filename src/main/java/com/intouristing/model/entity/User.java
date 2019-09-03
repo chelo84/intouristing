@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -46,5 +47,8 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPosition userPosition;
+
+    @ManyToMany
+    private List<ChatGroup> chatGroups;
 
 }
