@@ -6,8 +6,10 @@ import com.intouristing.model.entity.ChatGroup;
 import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
+import com.intouristing.model.entity.mongo.ReadBy;
 import com.intouristing.repository.ChatGroupRepository;
 import com.intouristing.repository.mongo.MessageRepository;
+import com.intouristing.service.account.AccountWsService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,7 +34,7 @@ public class MessageService extends RootService {
     private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(ChatGroupRepository chatGroupRepository, ChatService chatService, MessageRepository messageRepository) {
+    public MessageService(ChatGroupRepository chatGroupRepository, ChatService chatService, MessageRepository messageRepository, AccountWsService accountWsService) {
         this.chatGroupRepository = chatGroupRepository;
         this.chatService = chatService;
         this.messageRepository = messageRepository;
@@ -51,8 +55,15 @@ public class MessageService extends RootService {
 
             var usersToSendMessage = chatGroupRepository.findById(sendMessageDTO.getChatGroup())
                     .orElseThrow(() -> new NotFoundException(ChatGroup.class, sendMessageDTO.getChatGroup()))
-                    .getUsers();
-            message.setSentTo(usersToSendMessage.stream().map(User::getId).collect(Collectors.toList()));
+                    .getUsers()
+                    .stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+            if (!usersToSendMessage.contains(sentBy)) {
+                throw new RuntimeException("not.supposed.send.message.to.group");
+            }
+
+            message.setSentTo(usersToSendMessage.stream().filter(id -> !id.equals(sentBy)).collect(Collectors.toList()));
         } else {
             message = Message
                     .builder()
@@ -68,6 +79,28 @@ public class MessageService extends RootService {
         message.setId(new ObjectId());
 
         return messageRepository.save(message);
+    }
+
+    public Message readMessage(ObjectId messageId, Long userId) {
+        Message message = messageRepository.findById(messageId).get();
+
+        if (message.getSentTo().contains(userId)) {
+            List<ReadBy> readBy = Optional.ofNullable(message.getReadBy()).orElseGet(ArrayList::new);
+            readBy.add(this.createReadBy(userId));
+            message.setReadBy(readBy);
+            message.setReadByAll(readBy.stream().map(ReadBy::getUser).collect(Collectors.toList()).containsAll(message.getSentTo()));
+            return messageRepository.save(message);
+        }
+
+        throw new RuntimeException("not.supposed.read.message");
+    }
+
+    private ReadBy createReadBy(Long userId) {
+        return ReadBy
+                .builder()
+                .user(userId)
+                .readAt(LocalDateTime.now())
+                .build();
     }
 
 }

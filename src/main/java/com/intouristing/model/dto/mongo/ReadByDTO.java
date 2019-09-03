@@ -3,7 +3,7 @@ package com.intouristing.model.dto.mongo;
 import com.intouristing.model.entity.mongo.ReadBy;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
 
@@ -19,7 +19,7 @@ public class ReadByDTO {
 
     private Long user;
 
-    private LocalDate readAt;
+    private LocalDateTime readAt;
 
     public static ReadByDTO parseDTO(ReadBy readBy) {
         if (nonNull(readBy)) {

@@ -19,8 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.MESSAGE;
-import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.QUEUE_MESSAGE;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.junit.Assert.assertEquals;
@@ -64,6 +63,31 @@ public class ChatWsServiceTest extends WebSocketTest {
         assertNotNull(messageDTO);
         assertNotNull(messageDTO.getId());
         assertEquals(sendMessageDTO.getText(), messageDTO.getText());
+    }
+
+    @Test
+    public void shouldReadMessage() throws Exception {
+        String destinationToken = super.login();
+        var destinationId = TokenService.parseToken(destinationToken).getId();
+        StompSession destinationSession = super.getStompSession(destinationToken);
+        DefaultStompFrameHandler destinationStompHandler = new DefaultStompFrameHandler();
+        destinationSession.subscribe(USER + QUEUE_MESSAGE, destinationStompHandler);
+
+        String senderToken = super.anotherLogin();
+        var senderId = TokenService.parseToken(senderToken).getId();
+        StompSession senderSession = super.getStompSession(senderToken);
+        StompHeaders senderStompHeaders = super.getStompHeaders(senderToken);
+        var sendMessageDTO = MessageServiceTest.getSendMessageDTO(destinationId, false, null);
+        senderStompHeaders.setDestination(WS + MESSAGE);
+        when(chatService.findPrivateChat(senderId, destinationId))
+                .thenReturn(PrivateChat.builder().firstUser(min(senderId, destinationId)).secondUser(max(senderId, destinationId)).build());
+        senderSession.send(senderStompHeaders, objectMapper.writeValueAsString(sendMessageDTO).getBytes());
+
+        var messageId = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, TimeUnit.SECONDS), MessageDTO.class).getId();
+
+        var destinationStompHeaders = super.getStompHeaders(destinationToken);
+        destinationStompHeaders.setDestination(WS + READ_MESSAGE);
+        destinationSession.send(destinationStompHeaders, new String(messageId).getBytes());
     }
 
 }

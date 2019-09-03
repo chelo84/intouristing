@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,10 +83,11 @@ public class MessageServiceTest {
         SendMessageDTO sendMessageDTO = getSendMessageDTO(ANOTHER_USER_ID, true, GROUP_ID);
 
         var mockedUser = User.builder().id(ANOTHER_USER_ID).build();
+        var mockedUser2 = User.builder().id(USER_ID).build();
         var mockedChatGroup = ChatGroup
                 .builder()
                 .id(sendMessageDTO.getChatGroup())
-                .users(Collections.singletonList(mockedUser))
+                .users(Arrays.asList(mockedUser, mockedUser2))
                 .build();
         when(chatGroupRepository.findById(GROUP_ID)).thenReturn(Optional.of(mockedChatGroup));
         var message = messageService.createMessage(sendMessageDTO, USER_ID);
@@ -98,6 +99,21 @@ public class MessageServiceTest {
         assertThat(message.getSentTo(), containsInAnyOrder(mockedUser.getId()));
         assertEquals(Boolean.TRUE, sendMessageDTO.getIsGroup());
         assertNotNull(sendMessageDTO.getHash());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void shouldReadMessage() {
+        SendMessageDTO sendMessageDTO = getSendMessageDTO(ANOTHER_USER_ID, false, null);
+        when(chatService.findPrivateChat(USER_ID, sendMessageDTO.getSendTo())).thenReturn(PrivateChat.builder().firstUser(USER_ID).secondUser(ANOTHER_USER_ID).build());
+        var message = messageService.createMessage(sendMessageDTO, USER_ID);
+        message = messageRepository.findById(message.getId()).orElse(null);
+
+        var readMessage = messageService.readMessage(message.getId(), ANOTHER_USER_ID);
+
+        assertNotNull(readMessage);
+        assertEquals(1, readMessage.getReadBy().size());
+        assertTrue(readMessage.getReadByAll());
     }
 
 }

@@ -9,6 +9,7 @@ import com.intouristing.repository.UserRepository;
 import com.intouristing.service.MessageService;
 import com.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,10 @@ public class ChatWsService extends RootWsService {
 
         sendMessageDTO.setIsSent(true);
         return sendMessageDTO;
+    }
+
+    public void readMessage(ObjectId messageId) {
+        messageService.readMessage(messageId, accountWsService.getAccount().getId());
     }
 
 }
