@@ -81,6 +81,7 @@ public class MessageService extends RootService {
         return messageRepository.save(message);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Message readMessage(ObjectId messageId, Long userId) {
         Message message = messageRepository.findById(messageId).get();
 

@@ -1,6 +1,8 @@
 package com.intouristing.websocket.service;
 
 import com.intouristing.model.dto.mongo.MessageDTO;
+import com.intouristing.model.dto.mongo.ReadMessageDTO;
+import com.intouristing.model.dto.mongo.ReadMessageUserDTO;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
@@ -9,14 +11,19 @@ import com.intouristing.repository.UserRepository;
 import com.intouristing.service.MessageService;
 import com.intouristing.service.account.AccountWsService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.MESSAGE;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.READ_MESSAGE;
 
 /**
  * Created by Marcelo Lacroix on 31/08/2019.
@@ -40,19 +47,39 @@ public class ChatWsService extends RootWsService {
     }
 
     public SendMessageDTO sendMessage(SendMessageDTO sendMessageDTO) {
-        Message message = messageService.createMessage(sendMessageDTO, accountWsService.getAccount().getId());
-        List<User> usersToSendMessage = userRepository.findAllById(message.getSentTo());
+        var message = messageService.createMessage(sendMessageDTO, accountWsService.getAccount().getId());
+        var usersToNotificate = userRepository.findAllById(message.getSentTo());
 
-        for (User user : usersToSendMessage) {
-            super.sendToAnotherUser(MESSAGE, MessageDTO.parseDTO(message), user.getUsername());
-        }
+        this.notificateUsers(MESSAGE, MessageDTO.parseDTO(message), usersToNotificate);
 
         sendMessageDTO.setIsSent(true);
         return sendMessageDTO;
     }
 
     public void readMessage(ObjectId messageId) {
-        messageService.readMessage(messageId, accountWsService.getAccount().getId());
+        var message = messageService.readMessage(messageId, accountWsService.getAccount().getId());
+        var usersToNotificate = new HashSet<>(userRepository.findAllById(message.getSentTo()));
+        CollectionUtils.addIgnoreNull(usersToNotificate, userRepository.findById(message.getSentBy()).orElse(null));
+
+        var readMessageDTO = this.createReadMessageDTO(message);
+        this.notificateUsers(READ_MESSAGE, readMessageDTO, usersToNotificate);
+    }
+
+    private ReadMessageDTO createReadMessageDTO(Message message) {
+        var readMessageDTO = new ReadMessageDTO(message.getId().toString());
+        List<ReadMessageUserDTO> readMessageUserDTOs = message.getReadBy()
+                .stream()
+                .map(readBy -> ReadMessageUserDTO.parseDTO(readBy, userRepository.findById(readBy.getUser()).get()))
+                .collect(Collectors.toList());
+        readMessageDTO.setReadMessageUserDTOs(readMessageUserDTOs);
+
+        return readMessageDTO;
+    }
+
+    private void notificateUsers(String destination, Object dto, Collection<User> users) {
+        for (User user : users) {
+            super.sendToAnotherUser(destination, dto, user.getUsername());
+        }
     }
 
 }
