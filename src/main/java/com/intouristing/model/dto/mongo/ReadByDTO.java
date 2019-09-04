@@ -17,7 +17,11 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 public class ReadByDTO {
 
-    private Long user;
+    private Long userId;
+
+    private String userName;
+
+    private String userLastName;
 
     private LocalDateTime readAt;
 
@@ -25,7 +29,9 @@ public class ReadByDTO {
         if (nonNull(readBy)) {
             return ReadByDTO
                     .builder()
-                    .user(readBy.getUser())
+                    .userId(readBy.getUserId())
+                    .userName(readBy.getUserName())
+                    .userLastName(readBy.getUserLastName())
                     .readAt(readBy.getReadAt())
                     .build();
         }

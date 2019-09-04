@@ -102,8 +102,10 @@ public class ChatWsServiceTest extends WebSocketTest {
 
         assertNotNull(readMessage);
         assertEquals(messageId, readMessage.getMessageId());
-        assertThat(readMessage.getReadMessageUserDTOs().stream().map(ReadMessageUserDTO::getUserFullName).collect(Collectors.toList()),
-                containsInAnyOrder(String.format("%s %s", destinationTokenParsed.getName(), destinationTokenParsed.getLastName())));
+        assertThat(readMessage.getReadMessageUserDTOs().stream().map(ReadMessageUserDTO::getUserName).collect(Collectors.toList()),
+                containsInAnyOrder(destinationTokenParsed.getName()));
+        assertThat(readMessage.getReadMessageUserDTOs().stream().map(ReadMessageUserDTO::getUserLastName).collect(Collectors.toList()),
+                containsInAnyOrder(destinationTokenParsed.getLastName()));
         assertThat(readMessage.getReadMessageUserDTOs().stream().map(ReadMessageUserDTO::getUserId).collect(Collectors.toList()),
                 containsInAnyOrder(destinationId));
     }

@@ -2,6 +2,7 @@ package com.intouristing.service;
 
 import com.intouristing.Application;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
+import com.intouristing.model.entity.Account;
 import com.intouristing.model.entity.ChatGroup;
 import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
@@ -109,7 +110,10 @@ public class MessageServiceTest {
         var message = messageService.createMessage(sendMessageDTO, USER_ID);
         message = messageRepository.findById(message.getId()).orElse(null);
 
-        var readMessage = messageService.readMessage(message.getId(), ANOTHER_USER_ID);
+        Account account = Account.builder().id(ANOTHER_USER_ID).name("testName").lastName("testLastName").build();
+
+        assert message != null;
+        var readMessage = messageService.readMessage(message.getId(), account);
 
         assertNotNull(readMessage);
         assertEquals(1, readMessage.getReadBy().size());

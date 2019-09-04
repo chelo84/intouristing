@@ -14,7 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReadBy {
 
-    private Long user;
+    private Long userId;
+
+    private String userName;
+
+    private String userLastName;
 
     private LocalDateTime readAt;
 

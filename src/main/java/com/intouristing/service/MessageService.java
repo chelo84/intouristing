@@ -2,6 +2,7 @@ package com.intouristing.service;
 
 import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
+import com.intouristing.model.entity.Account;
 import com.intouristing.model.entity.ChatGroup;
 import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
@@ -82,24 +83,26 @@ public class MessageService extends RootService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Message readMessage(ObjectId messageId, Long userId) {
+    public Message readMessage(ObjectId messageId, Account account) {
         Message message = messageRepository.findById(messageId).get();
 
-        if (message.getSentTo().contains(userId)) {
+        if (message.getSentTo().contains(account.getId())) {
             List<ReadBy> readBy = Optional.ofNullable(message.getReadBy()).orElseGet(ArrayList::new);
-            readBy.add(this.createReadBy(userId));
+            readBy.add(this.createReadBy(account));
             message.setReadBy(readBy);
-            message.setReadByAll(readBy.stream().map(ReadBy::getUser).collect(Collectors.toList()).containsAll(message.getSentTo()));
+            message.setReadByAll(readBy.stream().map(ReadBy::getUserId).collect(Collectors.toList()).containsAll(message.getSentTo()));
             return messageRepository.save(message);
         }
 
         throw new RuntimeException("not.supposed.read.message");
     }
 
-    private ReadBy createReadBy(Long userId) {
+    private ReadBy createReadBy(Account account) {
         return ReadBy
                 .builder()
-                .user(userId)
+                .userId(account.getId())
+                .userName(account.getName())
+                .userLastName(account.getLastName())
                 .readAt(LocalDateTime.now())
                 .build();
     }

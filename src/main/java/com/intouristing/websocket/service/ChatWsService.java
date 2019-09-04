@@ -57,7 +57,7 @@ public class ChatWsService extends RootWsService {
     }
 
     public void readMessage(ObjectId messageId) {
-        var message = messageService.readMessage(messageId, accountWsService.getAccount().getId());
+        var message = messageService.readMessage(messageId, accountWsService.getAccount());
         var usersToNotificate = new HashSet<>(userRepository.findAllById(message.getSentTo()));
         CollectionUtils.addIgnoreNull(usersToNotificate, userRepository.findById(message.getSentBy()).orElse(null));
 
@@ -69,7 +69,7 @@ public class ChatWsService extends RootWsService {
         var readMessageDTO = new ReadMessageDTO(message.getId().toString());
         List<ReadMessageUserDTO> readMessageUserDTOs = message.getReadBy()
                 .stream()
-                .map(readBy -> ReadMessageUserDTO.parseDTO(readBy, userRepository.findById(readBy.getUser()).get()))
+                .map(ReadMessageUserDTO::parseDTO)
                 .collect(Collectors.toList());
         readMessageDTO.setReadMessageUserDTOs(readMessageUserDTOs);
 
