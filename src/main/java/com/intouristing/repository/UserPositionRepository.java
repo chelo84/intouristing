@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Marcelo Lacroix on 18/08/2019.
@@ -20,4 +21,7 @@ public interface UserPositionRepository extends JpaRepository<UserPosition, Long
             "and userPosition.longitude <= ?4 " +
             "and user.id <> ?5 ")
     List<User> findAllUsersInRange(double minLat, double maxLat, double minLong, double maxLong, long userId);
+
+    Optional<UserPosition> findByUser(User user);
+
 }

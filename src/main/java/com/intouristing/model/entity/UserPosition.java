@@ -3,10 +3,7 @@ package com.intouristing.model.entity;
 import com.intouristing.model.dto.UserPositionDTO;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 import static java.util.Objects.nonNull;
 
@@ -35,7 +32,7 @@ public class UserPosition {
 
     private Double heading;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @MapsId
     private User user;
 
