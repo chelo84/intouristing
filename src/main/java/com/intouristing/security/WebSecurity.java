@@ -17,13 +17,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Created by Marcelo Lacroix on 11/08/2019.
  */
 @EnableWebSecurity
-@CrossOrigin
+@CrossOrigin(exposedHeaders = {"Authorization"})
 @Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
@@ -48,6 +49,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), userRepository))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/*").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
+                .allowedHeaders("*").exposedHeaders("Authorization");
     }
 
     @Override
