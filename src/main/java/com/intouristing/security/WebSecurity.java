@@ -45,6 +45,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
                 .antMatchers(HttpMethod.GET, "/ping").permitAll()
                 .antMatchers(HttpMethod.GET, "/sockjs/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/avatar/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/verifications/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), userRepository))

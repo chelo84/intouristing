@@ -64,4 +64,12 @@ public class UserService extends RootService {
     public byte[] getAvatarImage(Long id) {
         return userRepository.findById(id).map(User::getAvatarImage).orElse(null);
     }
+
+    public Boolean verifyUsername(String username) {
+        return userRepository.findByUsername(username.trim().toLowerCase()).isPresent();
+    }
+
+    public Boolean verifyEmail(String email) {
+        return userRepository.findByEmail(email.trim().toLowerCase()).isPresent();
+    }
 }
