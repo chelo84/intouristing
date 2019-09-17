@@ -2,6 +2,7 @@ package com.intouristing.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.intouristing.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,6 @@ public class UserDTO {
 
     private String username;
 
-    @JsonIgnore
     private String password;
 
     private UserPositionDTO userPosition;

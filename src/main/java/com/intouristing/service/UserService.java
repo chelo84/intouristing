@@ -4,6 +4,7 @@ import com.intouristing.exceptions.NotFoundException;
 import com.intouristing.model.dto.UserDTO;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.UserPosition;
+import com.intouristing.repository.UserPositionRepository;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,13 @@ import java.time.LocalDateTime;
 public class UserService extends RootService {
 
     private final UserRepository userRepository;
+    private final UserPositionRepository userPositionRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AccountService accountService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountService accountService) {
+    public UserService(UserRepository userRepository, UserPositionRepository userPositionRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountService accountService) {
         this.userRepository = userRepository;
+        this.userPositionRepository = userPositionRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.accountService = accountService;
     }
@@ -44,12 +47,14 @@ public class UserService extends RootService {
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .email(userDTO.getEmail())
-                .userPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()))
                 .createdAt(LocalDateTime.now())
                 .build();
-        user.getUserPosition().setUser(user);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
+
+        user.setUserPosition(UserPosition.parseUserPosition(userDTO.getUserPosition()));
+        user.getUserPosition().setUser(user);
+        userPositionRepository.save(user.getUserPosition());
 
         return user;
     }
