@@ -6,6 +6,7 @@ import com.intouristing.service.TokenService;
 import com.intouristing.service.account.AccountService;
 import com.intouristing.service.account.AccountServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,7 +86,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         if (isNull(accountService)) {
             ServletContext servletContext = request.getServletContext();
             WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-            accountService = webApplicationContext.getBean(AccountServiceImpl.class);
+            accountService = (AccountService) webApplicationContext.getBean("accountService");
         }
     }
 }

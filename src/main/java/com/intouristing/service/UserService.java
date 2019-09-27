@@ -8,6 +8,7 @@ import com.intouristing.repository.UserPositionRepository;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ public class UserService extends RootService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AccountService accountService;
 
+    @Autowired
     public UserService(UserRepository userRepository, UserPositionRepository userPositionRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountService accountService) {
         this.userRepository = userRepository;
         this.userPositionRepository = userPositionRepository;
@@ -57,6 +59,15 @@ public class UserService extends RootService {
         userPositionRepository.save(user.getUserPosition());
 
         return user;
+    }
+
+    public User update(UserDTO userDTO) {
+        var user = userRepository.findById(accountService.getAccount().getId()).get();
+        user.setName(userDTO.getName());
+        user.setLastName(userDTO.getLastName());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(user);
     }
 
     public User setAvatarImage(Long id, MultipartFile multipartFile) throws IOException {

@@ -43,6 +43,11 @@ public class UserController {
         return UserDTO.parseDTO(userService.create(userDTO));
     }
 
+    @PutMapping
+    public UserDTO update(@RequestBody UserDTO userDTO) {
+        return UserDTO.parseDTO(userService.update(userDTO));
+    }
+
     @PostMapping("/avatar/{id}")
     public ResponseEntity<?> setAvatar(@PathVariable Long id,
                                        @RequestPart("avatar") MultipartFile multipartFile) throws Exception {
