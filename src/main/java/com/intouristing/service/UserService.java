@@ -88,4 +88,8 @@ public class UserService extends RootService {
     public Boolean verifyEmail(String email) {
         return userRepository.findByEmail(email.trim().toLowerCase()).isPresent();
     }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).get();
+    }
 }

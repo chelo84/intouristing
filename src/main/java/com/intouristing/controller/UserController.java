@@ -1,5 +1,7 @@
 package com.intouristing.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intouristing.model.dto.UserDTO;
 import com.intouristing.service.UserService;
@@ -13,6 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Date;
+
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.intouristing.security.SecurityConstants.*;
+import static java.util.Objects.nonNull;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -61,6 +69,28 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_DISPOSITION)
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(userService.getAvatarImage(id));
+    }
+
+    @GetMapping("/token/update")
+    public String updateToken(@RequestHeader("Authorization") String accessToken) {
+        String username = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                .build()
+                .verify(accessToken.replace(TOKEN_PREFIX, ""))
+                .getSubject();
+        String newToken = null;
+        if(nonNull(username)) {
+            var user = userService.findByUsername(username);
+            newToken = TOKEN_PREFIX + JWT.create()
+                    .withSubject(username)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .withClaim("id", user.getId())
+                    .withClaim("name", user.getName())
+                    .withClaim("lastName", user.getLastName())
+                    .withClaim("username", user.getUsername())
+                    .withClaim("email", user.getEmail())
+                    .sign(HMAC512(SECRET.getBytes()));
+        }
+        return newToken;
     }
 
 }
