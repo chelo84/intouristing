@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public void find(@PathVariable Long id) {
-        userService.find(id);
+    public UserDTO find(@PathVariable Long id) {
+        return UserDTO.parseDTO(userService.find(id));
     }
 
     @PostMapping
