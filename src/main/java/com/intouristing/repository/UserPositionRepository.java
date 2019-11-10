@@ -24,4 +24,6 @@ public interface UserPositionRepository extends JpaRepository<UserPosition, Long
 
     Optional<UserPosition> findByUser(User user);
 
+    Optional<UserPosition> findByUserId(Long userId);
+
 }
