@@ -50,4 +50,9 @@ public class User {
     @ManyToMany
     private List<ChatGroup> chatGroups;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "destination")
+    private List<Request> requestsAsDestination;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "sender")
+    private List<Request> requestsAsSender;
 }

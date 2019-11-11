@@ -1,6 +1,7 @@
 package com.intouristing.websocket.service;
 
 import com.intouristing.exceptions.NotFoundException;
+import com.intouristing.exceptions.RequestAlreadySentException;
 import com.intouristing.exceptions.RequestNotAcceptableException;
 import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.entity.Request;
@@ -42,6 +43,16 @@ public class RequestWsService extends RootWsService {
     public Request send(RequestDTO requestDTO) {
         User destination = userRepository.findById(requestDTO.getDestinationId())
                 .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestinationId()));
+
+        boolean hasAlreadySentRequest = requestRepository
+                .findByBothUsers(
+                        super.getUser().getId(),
+                        destination.getId()
+                ).isPresent();
+        if (hasAlreadySentRequest) {
+            throw new RequestAlreadySentException();
+        }
+
         Request request = Request
                 .builder()
                 .sender(super.getUser())
@@ -49,10 +60,8 @@ public class RequestWsService extends RootWsService {
                 .createdAt(LocalDateTime.now())
                 .type(RelationshipType.FRIENDSHIP)
                 .build();
-
         requestRepository.save(request);
         super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), destination.getUsername());
-
         return request;
     }
 

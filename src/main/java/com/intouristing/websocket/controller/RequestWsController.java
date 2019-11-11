@@ -29,8 +29,8 @@ public class RequestWsController {
 
     @MessageMapping(REQUEST)
     @SendToUser(QUEUE_REQUEST)
-    public RequestDTO send(@Payload RequestDTO requestDTO) {
-        return RequestDTO.parseDTO(requestWsService.send(requestDTO));
+    public void send(@Payload RequestDTO requestDTO) {
+        requestWsService.send(requestDTO);
     }
 
     @MessageMapping(ACCEPT_REQUEST)

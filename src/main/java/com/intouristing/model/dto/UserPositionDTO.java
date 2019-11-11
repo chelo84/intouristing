@@ -2,10 +2,7 @@ package com.intouristing.model.dto;
 
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.UserPosition;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Optional;
 
@@ -14,6 +11,8 @@ import static java.util.Objects.nonNull;
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
  */
+@Setter
+@Getter
 @Data
 @Builder
 @NoArgsConstructor
