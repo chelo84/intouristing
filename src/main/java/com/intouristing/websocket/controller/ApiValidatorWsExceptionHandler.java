@@ -43,19 +43,21 @@ public class ApiValidatorWsExceptionHandler {
     private ErrorWsDTO buildErrorDetails(Exception ex, Message message) {
         log.error(ex.getMessage(), ex);
 
-        String lookupDestination = (String) message.getHeaders().get(LOOKUP_DESTINATION),
-                msg = ApiValidatorExceptionHandler.getMessage(ex, messageSource),
-                stompCommand = Optional.ofNullable((StompCommand) message.getHeaders().get(STOMP_COMMAND))
-                        .map(StompCommand::getMessageType)
-                        .map(SimpMessageType::name)
-                        .orElse(null);
-
         return ErrorWsDTO
                 .builder()
                 .timestamp(LocalDateTime.now())
-                .lookupDestination(lookupDestination)
-                .message(msg)
-                .stompCommand(stompCommand)
+                .lookupDestination(
+                        (String) message.getHeaders().get(LOOKUP_DESTINATION)
+                )
+                .message(
+                        ApiValidatorExceptionHandler.getMessage(ex, messageSource)
+                )
+                .stompCommand(
+                        Optional.ofNullable((StompCommand) message.getHeaders().get(STOMP_COMMAND))
+                                .map(StompCommand::getMessageType)
+                                .map(SimpMessageType::name)
+                                .orElse(null)
+                )
                 .exception(ex.getClass().getSimpleName())
                 .build();
     }

@@ -44,14 +44,17 @@ public class MessageDTO {
 
     public static MessageDTO parseDTO(Message message) {
         if (nonNull(message)) {
-            return MessageDTO
-                    .builder()
+            return MessageDTO.builder()
                     .id(message.getId().toString())
                     .chatGroup(message.getChatGroup())
                     .text(message.getText())
                     .sentBy(message.getSentBy())
                     .sentTo(message.getSentTo())
-                    .readBy(emptyIfNull(message.getReadBy()).stream().map(ReadByDTO::parseDTO).collect(Collectors.toList()))
+                    .readBy(emptyIfNull(message.getReadBy())
+                            .stream()
+                            .map(ReadByDTO::parseDTO)
+                            .collect(Collectors.toList())
+                    )
                     .readByAll(message.getReadByAll())
                     .isGroup(message.getIsGroup())
                     .createdAt(message.getCreatedAt())

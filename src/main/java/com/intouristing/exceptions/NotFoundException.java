@@ -9,11 +9,21 @@ import java.util.stream.Stream;
 public class NotFoundException extends RootException {
 
     public <T> NotFoundException(Class<T> clazz, Long id) {
-        super("entity.of.type.not.found", clazz.getSimpleName(), id.toString());
+        super(
+                "entity.of.type.not.found",
+                clazz.getSimpleName(),
+                id.toString()
+        );
     }
 
     public <T> NotFoundException(Class<T> clazz, Long... ids) {
-        super("entity.of.type.not.found", clazz.getSimpleName(), Stream.of(ids).map(Object::toString).collect(Collectors.joining(" & ")));
+        super(
+                "entity.of.type.not.found",
+                clazz.getSimpleName(),
+                Stream.of(ids)
+                        .map(Object::toString)
+                        .collect(Collectors.joining(" & "))
+        );
     }
 
 }

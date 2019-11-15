@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -26,15 +28,27 @@ public class RootService {
     private UserRepository userRepository;
 
     public String getMessage(String message, Locale locale) {
-        return messageSource.getMessage(new DefaultMessageSourceResolvable(message), locale);
+        return messageSource.getMessage(
+                new DefaultMessageSourceResolvable(message),
+                locale
+        );
     }
 
-    public String getMessage(String message, Locale locale, Object... args) {
-        return messageSource.getMessage(message, args, locale);
+    public String getMessage(String message,
+                             Locale locale,
+                             Object... args) {
+        return messageSource.getMessage(
+                message,
+                args,
+                locale
+        );
     }
 
+    @Transactional(readOnly = true)
     public User getUser() {
-        User user = userRepository.findById(accountService.getAccount().getId()).orElse(null);
+        User user = userRepository.findById(
+                accountService.getAccount().getId()
+        ).orElse(null);
         assert nonNull(user);
         return user;
     }

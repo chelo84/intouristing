@@ -44,7 +44,11 @@ public class RequestDTO {
 
     public static RequestDTO parseDTO(Request request) {
         if (nonNull(request)) {
-            RequestDTO requestDTO = parseDTO(request.getSender(), request.getDestination(), request.getType());
+            RequestDTO requestDTO = parseDTO(
+                    request.getSender(),
+                    request.getDestination(),
+                    request.getType()
+            );
             assert nonNull(requestDTO);
             requestDTO.setId(request.getId());
             requestDTO.setCreatedAt(request.getCreatedAt());
@@ -60,12 +64,24 @@ public class RequestDTO {
         if (nonNull(sender) && nonNull(destination)) {
             return RequestDTO
                     .builder()
-                    .senderId(Optional.ofNullable(sender.getId()).orElse(null))
-                    .senderName(Optional.ofNullable(sender.getName()).orElse(null))
-                    .senderLastName(Optional.ofNullable(sender.getLastName()).orElse(null))
-                    .destinationId(Optional.ofNullable(destination.getId()).orElse(null))
-                    .destinationName(Optional.ofNullable(destination.getName()).orElse(null))
-                    .destinationLastName(Optional.ofNullable(destination.getLastName()).orElse(null))
+                    .senderId(Optional.ofNullable(sender.getId())
+                            .orElse(null)
+                    )
+                    .senderName(Optional.ofNullable(sender.getName())
+                            .orElse(null)
+                    )
+                    .senderLastName(Optional.ofNullable(sender.getLastName())
+                            .orElse(null)
+                    )
+                    .destinationId(Optional.ofNullable(destination.getId())
+                            .orElse(null)
+                    )
+                    .destinationName(Optional.ofNullable(destination.getName())
+                            .orElse(null)
+                    )
+                    .destinationLastName(Optional.ofNullable(destination.getLastName())
+                            .orElse(null)
+                    )
                     .type(relationshipType.name())
                     .build();
         }

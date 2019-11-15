@@ -8,6 +8,7 @@ import com.intouristing.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,7 +27,8 @@ public class SearchWsService extends RootWsService {
     private final UserRepository userRepository;
 
     @Autowired
-    public SearchWsService(UserPositionRepository userPositionRepository, UserRepository userRepository) {
+    public SearchWsService(UserPositionRepository userPositionRepository,
+                           UserRepository userRepository) {
         this.userPositionRepository = userPositionRepository;
         this.userRepository = userRepository;
     }
@@ -46,9 +48,14 @@ public class SearchWsService extends RootWsService {
                 minLong = longitude - deltaLong,
                 maxLong = longitude + deltaLong;
 
-        return userPositionRepository.findAllUsersInRange(minLat, maxLat, minLong, maxLong, currentUser.getId());
+        return userPositionRepository.findAllUsersInRange(
+                minLat, maxLat,
+                minLong, maxLong,
+                currentUser.getId()
+        );
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updatePosition(UserPositionDTO userPositionDTO) {
         User user = super.getUser();
         UserPosition userPosition = userPositionRepository.findByUser(user)

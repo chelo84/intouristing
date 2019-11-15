@@ -40,16 +40,22 @@ public class ChatGroupDTO {
 
     public static ChatGroupDTO parseDTO(ChatGroup chatGroup) {
         if (nonNull(chatGroup)) {
-            return ChatGroupDTO
-                    .builder()
+            return ChatGroupDTO.builder()
                     .id(chatGroup.getId())
                     .title(chatGroup.getTitle())
                     .type(chatGroup.getType().name())
                     .createdAt(chatGroup.getCreatedAt())
                     .updatedAt(chatGroup.getUpdatedAt())
                     .excludedAt(chatGroup.getExcludedAt())
-                    .createdBy(Optional.ofNullable(chatGroup.getCreatedBy()).map(UserDTO::parseDTO).orElse(null))
-                    .users(emptyIfNull(chatGroup.getUsers()).stream().map(User::getId).collect(Collectors.toList()))
+                    .createdBy(Optional.ofNullable(chatGroup.getCreatedBy())
+                            .map(UserDTO::parseDTO)
+                            .orElse(null)
+                    )
+                    .users(emptyIfNull(chatGroup.getUsers())
+                            .stream()
+                            .map(User::getId)
+                            .collect(Collectors.toList())
+                    )
                     .build();
         }
 

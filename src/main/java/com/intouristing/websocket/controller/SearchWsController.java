@@ -45,7 +45,9 @@ public class SearchWsController extends RootWsController {
     @MessageMapping(SEARCH)
     @SendToUser(QUEUE_SEARCH)
     public SearchDTO search(double radius) {
-        Optional<UserPosition> currUserPosition = userPositionRepository.findByUserId(accountWsService.getAccount().getId());
+        Optional<UserPosition> currUserPosition = userPositionRepository.findByUserId(
+                accountWsService.getAccount().getId()
+        );
         assert currUserPosition.isPresent();
         List<UserDTO> users = searchWsService.search(radius)
                 .stream()

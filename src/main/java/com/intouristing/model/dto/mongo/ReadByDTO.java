@@ -27,8 +27,7 @@ public class ReadByDTO {
 
     public static ReadByDTO parseDTO(ReadBy readBy) {
         if (nonNull(readBy)) {
-            return ReadByDTO
-                    .builder()
+            return ReadByDTO.builder()
                     .userId(readBy.getUserId())
                     .userName(readBy.getUserName())
                     .userLastName(readBy.getUserLastName())

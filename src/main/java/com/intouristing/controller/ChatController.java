@@ -31,7 +31,12 @@ public class ChatController {
 
     @PostMapping("/group")
     public ChatGroupDTO createChatGroup(@RequestBody ChatGroupDTO chatGroupDTO) {
-        return ChatGroupDTO.parseDTO(chatService.createChatGroup(chatGroupDTO, accountService.getAccount().getId()));
+        return ChatGroupDTO.parseDTO(
+                chatService.createChatGroup(
+                        chatGroupDTO,
+                        accountService.getAccount().getId()
+                )
+        );
     }
 
     @GetMapping("/group/{id}")

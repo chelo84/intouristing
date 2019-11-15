@@ -31,4 +31,5 @@ public class Relationship {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
 }

@@ -7,6 +7,7 @@ import com.intouristing.model.key.RelationshipId;
 import com.intouristing.repository.RelationshipRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class RelationshipService extends RootService {
         this.chatService = chatService;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Relationship createFriendship(User firstUser, User secondUser) {
         RelationshipId relationshipId = this.createRelationshipId(firstUser.getId(), secondUser.getId());
         Relationship relationship = Relationship

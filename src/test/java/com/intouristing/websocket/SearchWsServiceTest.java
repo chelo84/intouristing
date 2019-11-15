@@ -51,6 +51,8 @@ public class SearchWsServiceTest extends WebSocketTest {
         session.send(stompHeaders, message.getBytes());
 
         UserDTO expectedDTO = UserDTO.parseDTO(userRepository.findByUsername(TokenService.parseToken(anotherAccessToken).getUsername()).get());
+        assert expectedDTO != null;
+        expectedDTO.setDistance(0L);
 
         Assert.assertEquals("{\"users\":[" + objectMapper.writeValueAsString(expectedDTO) + "]}", stompHandler.blockingQueue.poll(2, SECONDS));
     }

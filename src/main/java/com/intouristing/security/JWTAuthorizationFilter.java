@@ -79,7 +79,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private void resolveAccountInfo(HttpServletRequest request) {
         resolveAccountServiceBean(request);
-        accountService.setAccount(TokenService.parseToken(request.getHeader(AUTH_HEADER_STRING)));
+        accountService.setAccount(
+                TokenService.parseToken(
+                        request.getHeader(AUTH_HEADER_STRING)
+                )
+        );
     }
 
     private void resolveAccountServiceBean(HttpServletRequest request) {

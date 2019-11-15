@@ -13,6 +13,7 @@ import com.intouristing.service.RelationshipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,6 @@ import static com.intouristing.websocket.messagemapping.MessageMappings.Request.
 /**
  * Created by Marcelo Lacroix on 27/08/2019.
  */
-@Transactional
 @Slf4j
 @Service
 public class RequestWsService extends RootWsService {
@@ -34,12 +34,15 @@ public class RequestWsService extends RootWsService {
     private final RelationshipService relationshipService;
 
     @Autowired
-    public RequestWsService(UserRepository userRepository, RequestRepository requestRepository, RelationshipService relationshipService) {
+    public RequestWsService(UserRepository userRepository,
+                            RequestRepository requestRepository,
+                            RelationshipService relationshipService) {
         this.userRepository = userRepository;
         this.requestRepository = requestRepository;
         this.relationshipService = relationshipService;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Request send(RequestDTO requestDTO) {
         User destination = userRepository.findById(requestDTO.getDestinationId())
                 .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestinationId()));
@@ -61,25 +64,38 @@ public class RequestWsService extends RootWsService {
                 .type(RelationshipType.FRIENDSHIP)
                 .build();
         requestRepository.save(request);
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), destination.getUsername());
+        super.sendToAnotherUser(
+                REQUEST,
+                RequestDTO.parseDTO(request),
+                destination.getUsername()
+        );
         return request;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void accept(Long requestId) throws Exception {
         Optional<Request> optRequest = requestRepository.findById(requestId);
-        optRequest
-                .map(Request::getDestination)
+        optRequest.map(Request::getDestination)
                 .map(User::getId)
-                .filter(Predicate.isEqual(super.getUser().getId()))
+                .filter(
+                        Predicate.isEqual(super.getUser().getId())
+                )
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
         request.setAcceptedAt(LocalDateTime.now());
         requestRepository.save(request);
 
-        relationshipService.createFriendship(request.getSender(), request.getDestination());
+        relationshipService.createFriendship(
+                request.getSender(),
+                request.getDestination()
+        );
 
-        super.sendToAnotherUser(REQUEST, RequestDTO.parseDTO(request), request.getSender().getUsername());
+        super.sendToAnotherUser(
+                REQUEST,
+                RequestDTO.parseDTO(request),
+                request.getSender().getUsername()
+        );
     }
 
 }

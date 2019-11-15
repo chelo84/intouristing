@@ -38,19 +38,33 @@ public class ApiValidatorExceptionHandler {
         try {
             RootException rootEx = (RootException) ex;
             if (ArrayUtils.isNotEmpty(rootEx.getParams())) {
-                message = messageSource.getMessage(ex.getMessage(), rootEx.getParams(), LocaleContextHolder.getLocale());
+                message = messageSource.getMessage(
+                        ex.getMessage(),
+                        rootEx.getParams(),
+                        LocaleContextHolder.getLocale()
+                );
             } else {
-                message = messageSource.getMessage(new DefaultMessageSourceResolvable(rootEx.getMessage()), LocaleContextHolder.getLocale());
+                message = messageSource.getMessage(
+                        new DefaultMessageSourceResolvable(rootEx.getMessage()),
+                        LocaleContextHolder.getLocale()
+                );
             }
         } catch (NoSuchMessageException | ClassCastException e) {
-            message = messageSource.getMessage(new DefaultMessageSourceResolvable(UNEXPECTED_ERROR), LocaleContextHolder.getLocale());
+            message = messageSource.getMessage(
+                    new DefaultMessageSourceResolvable(UNEXPECTED_ERROR),
+                    LocaleContextHolder.getLocale()
+            );
         }
         return message;
     }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        ErrorDTO errorDetails = buildErrorDetails(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDTO errorDetails = buildErrorDetails(
+                ex,
+                request,
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
         log.error(ex.getMessage(), ex);
         return new ResponseEntity(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -58,10 +72,12 @@ public class ApiValidatorExceptionHandler {
     private ErrorDTO buildErrorDetails(Exception ex, WebRequest request, HttpStatus httpStatus) {
         log.error(ex.getMessage(), ex);
         String message = getMessage(ex, messageSource);
-        return new ErrorDTO(LocalDateTime.now(),
+        return new ErrorDTO(
+                LocalDateTime.now(),
                 httpStatus.value(),
                 httpStatus.getReasonPhrase(),
                 message,
-                request.getContextPath());
+                request.getContextPath()
+        );
     }
 }

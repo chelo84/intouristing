@@ -56,13 +56,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcC
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/*").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
-                .allowedHeaders("*").exposedHeaders("Authorization");
+        registry.addMapping("/*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization");
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Bean

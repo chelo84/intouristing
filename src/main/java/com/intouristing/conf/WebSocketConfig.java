@@ -70,7 +70,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         .map(list -> list.stream().findFirst().orElse(null))
                         .orElse(null);
                 String username = null;
-                if (!StompCommand.SUBSCRIBE.equals(accessor.getCommand()) && !StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                if (!StompCommand.SUBSCRIBE.equals(accessor.getCommand())
+                        && !StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     try {
                         username = verifyToken(token);
                     } catch (Exception ex) {

@@ -35,7 +35,10 @@ public class MessageService extends RootService {
     private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(ChatGroupRepository chatGroupRepository, ChatService chatService, MessageRepository messageRepository, AccountWsService accountWsService) {
+    public MessageService(ChatGroupRepository chatGroupRepository,
+                          ChatService chatService,
+                          MessageRepository messageRepository,
+                          AccountWsService accountWsService) {
         this.chatGroupRepository = chatGroupRepository;
         this.chatService = chatService;
         this.messageRepository = messageRepository;
@@ -55,7 +58,11 @@ public class MessageService extends RootService {
                     .build();
 
             var usersToSendMessage = chatGroupRepository.findById(sendMessageDTO.getChatGroup())
-                    .orElseThrow(() -> new NotFoundException(ChatGroup.class, sendMessageDTO.getChatGroup()))
+                    .orElseThrow(() -> new NotFoundException(
+                                    ChatGroup.class,
+                                    sendMessageDTO.getChatGroup()
+                            )
+                    )
                     .getUsers()
                     .stream()
                     .map(User::getId)
@@ -64,7 +71,11 @@ public class MessageService extends RootService {
                 throw new RuntimeException("not.supposed.send.message.to.group");
             }
 
-            message.setSentTo(usersToSendMessage.stream().filter(id -> !id.equals(sentBy)).collect(Collectors.toList()));
+            message.setSentTo(
+                    usersToSendMessage.stream()
+                            .filter(id -> !id.equals(sentBy))
+                            .collect(Collectors.toList())
+            );
         } else {
             message = Message
                     .builder()
@@ -73,8 +84,11 @@ public class MessageService extends RootService {
                     .createdAt(LocalDateTime.now())
                     .sentTo(Collections.singletonList(sendMessageDTO.getSendTo()))
                     .isGroup(false)
-                    .privateChat(Optional.ofNullable(chatService.findPrivateChat(sentBy, sendMessageDTO.getSendTo()))
-                            .orElseThrow(() -> new NotFoundException(PrivateChat.class, sentBy, sendMessageDTO.getSendTo())))
+                    .privateChat(
+                            Optional.ofNullable(
+                                    chatService.findPrivateChat(sentBy, sendMessageDTO.getSendTo())
+                            ).orElseThrow(() -> new NotFoundException(PrivateChat.class, sentBy, sendMessageDTO.getSendTo()))
+                    )
                     .build();
         }
         message.setId(new ObjectId());
@@ -87,10 +101,16 @@ public class MessageService extends RootService {
         Message message = messageRepository.findById(messageId).get();
 
         if (message.getSentTo().contains(account.getId())) {
-            List<ReadBy> readBy = Optional.ofNullable(message.getReadBy()).orElseGet(ArrayList::new);
+            List<ReadBy> readBy = Optional.ofNullable(message.getReadBy())
+                    .orElseGet(ArrayList::new);
             readBy.add(this.createReadBy(account));
             message.setReadBy(readBy);
-            message.setReadByAll(readBy.stream().map(ReadBy::getUserId).collect(Collectors.toList()).containsAll(message.getSentTo()));
+            message.setReadByAll(
+                    readBy.stream()
+                            .map(ReadBy::getUserId)
+                            .collect(Collectors.toList())
+                            .containsAll(message.getSentTo())
+            );
             return messageRepository.save(message);
         }
 

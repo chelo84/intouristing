@@ -88,6 +88,7 @@ public class RequestWsServiceTest extends WebSocketTest {
         destinationSession.send(destinationStompHeaders, String.valueOf(requestId).getBytes());
         senderStompHandler.blockingQueue.poll(1, SECONDS);
 
+        // TODO verify why this test is broken
         RequestDTO acceptedRequest = objectMapper.readValue(senderStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class);
         assertNotNull(acceptedRequest);
         assertEquals(TokenService.parseToken(senderToken).getId(), acceptedRequest.getSenderId());

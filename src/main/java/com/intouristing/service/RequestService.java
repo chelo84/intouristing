@@ -5,6 +5,8 @@ import com.intouristing.repository.RequestRepository;
 import com.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,11 +23,17 @@ public class RequestService extends RootService {
         this.accountService = accountService;
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.NEVER)
     public List<Request> findAll() {
-        return requestRepository.findAllPendingByDestinationIdOrSenderId(accountService.getAccount().getId());
+        return requestRepository.findAllPendingByDestinationIdOrSenderId(
+                accountService.getAccount().getId()
+        );
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.NEVER)
     public long countAll() {
-        return requestRepository.countAllPendingByDestinationIdOrSenderId(accountService.getAccount().getId());
+        return requestRepository.countAllPendingByDestinationIdOrSenderId(
+                accountService.getAccount().getId()
+        );
     }
 }

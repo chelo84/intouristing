@@ -11,6 +11,8 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +35,19 @@ public class RootWsService {
     @Autowired
     private SimpUserRegistry simpUserRegistry;
 
-    List<String> getUsers(String destination, String... sendToVarargs) {
-        return RootWsController.getUsers(destination, simpUserRegistry, Arrays.stream(sendToVarargs), sendToVarargs);
+    List<String> getUsers(String destination,
+                          String... sendToVarargs) {
+        return RootWsController.getUsers(
+                destination,
+                simpUserRegistry,
+                Arrays.stream(sendToVarargs),
+                sendToVarargs
+        );
     }
 
-    void sendToUser(String destination, Object message, String username) {
+    void sendToUser(String destination,
+                    Object message,
+                    String username) {
         messagingTemplate.convertAndSendToUser(
                 username,
                 "/queue/" + destination,
@@ -49,7 +59,9 @@ public class RootWsService {
         messagingTemplate.convertAndSend(destination, message);
     }
 
-    void sendToAnotherUser(String destination, Object message, String... usernames) {
+    void sendToAnotherUser(String destination,
+                           Object message,
+                           String... usernames) {
         for (String username : usernames) {
             messagingTemplate.convertAndSendToUser(
                     username,
@@ -59,7 +71,9 @@ public class RootWsService {
         }
     }
 
-    void sendToAnotherUser(String destination, Object message, List<String> usernames) {
+    void sendToAnotherUser(String destination,
+                           Object message,
+                           List<String> usernames) {
         this.sendToAnotherUser(
                 destination,
                 message,
@@ -68,13 +82,23 @@ public class RootWsService {
     }
 
     public String getMessage(String message, Locale locale) {
-        return messageSource.getMessage(new DefaultMessageSourceResolvable(message), locale);
+        return messageSource.getMessage(
+                new DefaultMessageSourceResolvable(message),
+                locale
+        );
     }
 
-    public String getMessage(String message, Locale locale, Object... args) {
-        return messageSource.getMessage(message, args, locale);
+    public String getMessage(String message,
+                             Locale locale,
+                             Object... args) {
+        return messageSource.getMessage(
+                message,
+                args,
+                locale
+        );
     }
 
+    @Transactional(readOnly = true)
     public User getUser() {
         Long id = accountWsService.getAccount().getId();
         return userRepository.findById(id)

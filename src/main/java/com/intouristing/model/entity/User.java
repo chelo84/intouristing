@@ -55,4 +55,5 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "sender")
     private List<Request> requestsAsSender;
+
 }

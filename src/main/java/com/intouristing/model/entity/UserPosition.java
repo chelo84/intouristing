@@ -49,4 +49,5 @@ public class UserPosition {
         }
         return new UserPosition();
     }
+
 }

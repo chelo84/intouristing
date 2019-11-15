@@ -35,13 +35,17 @@ public class ChatService extends RootService {
     private final MessageRepository messageRepository;
 
     @Autowired
-    public ChatService(ChatGroupRepository chatGroupRepository, PrivateChatRepository privateChatRepository, UserRepository userRepository, MessageRepository messageRepository) {
+    public ChatService(ChatGroupRepository chatGroupRepository,
+                       PrivateChatRepository privateChatRepository,
+                       UserRepository userRepository,
+                       MessageRepository messageRepository) {
         this.chatGroupRepository = chatGroupRepository;
         this.privateChatRepository = privateChatRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public ChatGroup createChatGroup(ChatGroupDTO chatGroupDTO, Long user) {
         ChatGroup chatGroup = ChatGroup
                 .builder()
@@ -60,6 +64,7 @@ public class ChatService extends RootService {
                 .orElseThrow(() -> new NotFoundException(ChatGroup.class, chatGroupId));
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Long deleteChatGroup(Long chatGroupId) {
         var chatGroup = chatGroupRepository.findById(chatGroupId)
                 .orElseThrow(() -> new NotFoundException(ChatGroup.class, chatGroupId));
@@ -88,20 +93,38 @@ public class ChatService extends RootService {
 
     @Transactional(readOnly = true)
     public PrivateChat findPrivateChat(Long firstUser, Long secondUser) {
-        return privateChatRepository.findById(new PrivateChatId(Math.min(firstUser, secondUser), Math.max(firstUser, secondUser)))
-                .orElse(null);
+        return privateChatRepository.findById(
+                new PrivateChatId(Math.min(firstUser, secondUser),Math.max(firstUser, secondUser))
+        ).orElse(null);
     }
 
     @Transactional(readOnly = true)
-    public List<Message> findChatGroupMessages(Long chatGroupId, int page, int size) {
-        return messageRepository.findAllByChatGroup(chatGroupId, PageRequest.of(page, size, Sort.by("createdAt")));
+    public List<Message> findChatGroupMessages(Long chatGroupId,
+                                               int page,
+                                               int size) {
+        return messageRepository.findAllByChatGroup(chatGroupId,
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("createdAt")
+                )
+        );
     }
 
     @Transactional(readOnly = true)
-    public List<Message> findPrivateChatMessages(Long firstUser, Long secondUser, int page, int size) {
-        return messageRepository.findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(Math.min(firstUser, secondUser),
+    public List<Message> findPrivateChatMessages(Long firstUser,
+                                                 Long secondUser,
+                                                 int page,
+                                                 int size) {
+        return messageRepository.findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(
+                Math.min(firstUser, secondUser),
                 Math.max(firstUser, secondUser),
-                PageRequest.of(page, size, Sort.by("createdAt")));
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by("createdAt")
+                )
+        );
     }
 
 }

@@ -25,7 +25,13 @@ public interface UserPositionRepository extends JpaRepository<UserPosition, Long
             "and ((requestsAsSender.id is null and requestsAsDestination.id is null) " +
             "or ((requestsAsSender.destination.id is null or requestsAsSender.destination.id <> ?5) " +
             "and (requestsAsDestination.sender.id is null or requestsAsDestination.sender.id <> ?5))) ")
-    List<User> findAllUsersInRange(double minLat, double maxLat, double minLong, double maxLong, long userId);
+    List<User> findAllUsersInRange(
+            double minLat,
+            double maxLat,
+            double minLong,
+            double maxLong,
+            long userId
+    );
 
     Optional<UserPosition> findByUser(User user);
 

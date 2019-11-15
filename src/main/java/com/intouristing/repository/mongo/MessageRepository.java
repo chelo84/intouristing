@@ -14,6 +14,10 @@ public interface MessageRepository extends MongoRepository<Message, ObjectId> {
 
     List<Message> findAllByChatGroup(Long chatGroupId, Pageable pageable);
 
-    List<Message> findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(Long firstUser, Long secondUser, Pageable pageable);
+    List<Message> findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(
+            Long firstUser,
+            Long secondUser,
+            Pageable pageable
+    );
 
 }

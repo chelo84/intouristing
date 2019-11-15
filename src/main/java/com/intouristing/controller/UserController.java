@@ -3,7 +3,6 @@ package com.intouristing.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intouristing.model.dto.RequestDTO;
 import com.intouristing.model.dto.UserDTO;
 import com.intouristing.service.UserService;
 import com.intouristing.service.account.AccountService;
@@ -16,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Date;
-import java.util.List;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.intouristing.security.SecurityConstants.*;
@@ -37,7 +34,9 @@ public class UserController {
     private final AccountService accountService;
 
     @Autowired
-    public UserController(UserService userService, ObjectMapper objectMapper, AccountService accountService) {
+    public UserController(UserService userService,
+                          ObjectMapper objectMapper,
+                          AccountService accountService) {
         this.userService = userService;
         this.objectMapper = objectMapper;
         this.accountService = accountService;
@@ -80,7 +79,7 @@ public class UserController {
                 .verify(accessToken.replace(TOKEN_PREFIX, ""))
                 .getSubject();
         String newToken = null;
-        if(nonNull(username)) {
+        if (nonNull(username)) {
             var user = userService.findByUsername(username);
             newToken = TOKEN_PREFIX + JWT.create()
                     .withSubject(username)

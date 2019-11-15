@@ -35,10 +35,13 @@ public class RootWsController {
         }
 
         String subDestination = "/user/queue" + destination;
-        Set<SimpSubscription> subscriptionsSet = simpUserRegistry.findSubscriptions((simpSubscription) -> simpSubscription.getDestination().equals(subDestination));
+        Set<SimpSubscription> subscriptionsSet = simpUserRegistry.findSubscriptions(
+                (simpSubscription) -> simpSubscription.getDestination().equals(subDestination)
+        );
         SimpSubscription[] subscriptions = subscriptionsSet.toArray(new SimpSubscription[0]);
         List<String> userList = new ArrayList<>();
-        List<String> sendTo = stream.map(String::toLowerCase).collect(Collectors.toList());
+        List<String> sendTo = stream.map(String::toLowerCase)
+                .collect(Collectors.toList());
         if (ArrayUtils.isNotEmpty(subscriptions)) {
             userList = Stream.of(subscriptionsSet.toArray(subscriptions))
                     .map(SimpSubscription::getSession)
@@ -53,7 +56,12 @@ public class RootWsController {
     }
 
     List<String> getUsers(String destination, String... sendToVarargs) {
-        return getUsers(destination, simpUserRegistry, Arrays.stream(sendToVarargs), sendToVarargs);
+        return getUsers(
+                destination,
+                simpUserRegistry,
+                Arrays.stream(sendToVarargs),
+                sendToVarargs
+        );
     }
 
     void sendToUser(String destination, Object message, String username) {

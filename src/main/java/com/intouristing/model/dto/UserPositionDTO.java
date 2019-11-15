@@ -43,7 +43,10 @@ public class UserPositionDTO {
                     .accuracy(userPosition.getAccuracy())
                     .speed(userPosition.getSpeed())
                     .heading(userPosition.getHeading())
-                    .user(Optional.ofNullable(userPosition.getUser()).map(User::getId).orElse(null))
+                    .user(Optional.ofNullable(userPosition.getUser())
+                            .map(User::getId)
+                            .orElse(null)
+                    )
                     .build();
         }
         return null;

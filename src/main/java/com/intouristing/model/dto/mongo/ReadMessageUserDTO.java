@@ -24,8 +24,7 @@ public class ReadMessageUserDTO {
     private LocalDateTime readAt;
 
     public static ReadMessageUserDTO parseDTO(ReadBy readBy) {
-        return ReadMessageUserDTO
-                .builder()
+        return ReadMessageUserDTO.builder()
                 .userId(readBy.getUserId())
                 .userName(readBy.getUserName())
                 .userLastName(readBy.getUserLastName())
