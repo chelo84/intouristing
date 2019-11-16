@@ -44,8 +44,8 @@ public class RequestWsService extends RootWsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Request send(RequestDTO requestDTO) {
-        User destination = userRepository.findById(requestDTO.getDestinationId())
-                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestinationId()));
+        User destination = userRepository.findById(requestDTO.getDestination().getId())
+                .orElseThrow(() -> new NotFoundException(User.class, requestDTO.getDestination().getId()));
 
         boolean hasAlreadySentRequest = requestRepository
                 .findByBothUsers(

@@ -22,17 +22,9 @@ public class RequestDTO {
 
     private Long id;
 
-    private Long senderId;
+    private UserDTO sender;
 
-    private String senderName;
-
-    private String senderLastName;
-
-    private Long destinationId;
-
-    private String destinationName;
-
-    private String destinationLastName;
+    private UserDTO destination;
 
     private String type;
 
@@ -64,23 +56,11 @@ public class RequestDTO {
         if (nonNull(sender) && nonNull(destination)) {
             return RequestDTO
                     .builder()
-                    .senderId(Optional.ofNullable(sender.getId())
-                            .orElse(null)
+                    .sender(
+                            UserDTO.parseDTO(sender, destination.getUserPosition())
                     )
-                    .senderName(Optional.ofNullable(sender.getName())
-                            .orElse(null)
-                    )
-                    .senderLastName(Optional.ofNullable(sender.getLastName())
-                            .orElse(null)
-                    )
-                    .destinationId(Optional.ofNullable(destination.getId())
-                            .orElse(null)
-                    )
-                    .destinationName(Optional.ofNullable(destination.getName())
-                            .orElse(null)
-                    )
-                    .destinationLastName(Optional.ofNullable(destination.getLastName())
-                            .orElse(null)
+                    .destination(
+                            UserDTO.parseDTO(destination, sender.getUserPosition())
                     )
                     .type(relationshipType.name())
                     .build();

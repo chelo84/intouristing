@@ -60,8 +60,8 @@ public class RequestWsServiceTest extends WebSocketTest {
         RequestDTO receivedRequest = objectMapper.readValue(destinationStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class);
         assertNotNull(receivedRequest);
         assertNotNull(receivedRequest.getCreatedAt());
-        assertEquals(TokenService.parseToken(senderToken).getId(), receivedRequest.getSenderId());
-        assertEquals(TokenService.parseToken(destinationToken).getId(), receivedRequest.getDestinationId());
+        assertEquals(TokenService.parseToken(senderToken).getId(), receivedRequest.getSender().getId());
+        assertEquals(TokenService.parseToken(destinationToken).getId(), receivedRequest.getDestination().getId());
     }
 
 
@@ -91,8 +91,8 @@ public class RequestWsServiceTest extends WebSocketTest {
         // TODO verify why this test is broken
         RequestDTO acceptedRequest = objectMapper.readValue(senderStompHandler.blockingQueue.poll(1, SECONDS), RequestDTO.class);
         assertNotNull(acceptedRequest);
-        assertEquals(TokenService.parseToken(senderToken).getId(), acceptedRequest.getSenderId());
-        assertEquals(TokenService.parseToken(destinationToken).getId(), acceptedRequest.getDestinationId());
+        assertEquals(TokenService.parseToken(senderToken).getId(), acceptedRequest.getSender().getId());
+        assertEquals(TokenService.parseToken(destinationToken).getId(), acceptedRequest.getDestination().getId());
         assertNotNull(acceptedRequest.getAcceptedAt());
     }
 
