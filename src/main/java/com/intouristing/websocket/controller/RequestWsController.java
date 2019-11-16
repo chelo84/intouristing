@@ -37,4 +37,9 @@ public class RequestWsController {
     public void accept(long requestId) throws Exception {
         requestWsService.accept(requestId);
     }
+
+    @MessageMapping(DECLINE_REQUEST)
+    public void decline(long requestId) throws Exception {
+        requestWsService.decline(requestId);
+    }
 }

@@ -98,4 +98,24 @@ public class RequestWsService extends RootWsService {
         );
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void decline(Long requestId) throws Exception {
+        Optional<Request> optRequest = requestRepository.findById(requestId);
+        optRequest.map(Request::getDestination)
+                .map(User::getId)
+                .filter(
+                        Predicate.isEqual(super.getUser().getId())
+                )
+                .orElseThrow(RequestNotAcceptableException::new);
+
+        Request request = optRequest.get();
+        request.setDeclinedAt(LocalDateTime.now());
+        requestRepository.save(request);
+
+        super.sendToAnotherUser(
+                REQUEST,
+                RequestDTO.parseDTO(request),
+                request.getSender().getUsername()
+        );
+    }
 }

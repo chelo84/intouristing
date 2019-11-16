@@ -11,6 +11,7 @@ public interface MessageMappings {
         String REQUEST = "/request";
         String QUEUE_REQUEST = QUEUE + REQUEST;
         String ACCEPT_REQUEST = "/accept-request";
+        String DECLINE_REQUEST = "/decline-request";
     }
 
     interface Search {
