@@ -20,4 +20,9 @@ public interface MessageRepository extends MongoRepository<Message, ObjectId> {
             Pageable pageable
     );
 
+    Message findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderByCreatedAtAsc(
+            Long firstUser,
+            Long secondUser
+    );
+
 }

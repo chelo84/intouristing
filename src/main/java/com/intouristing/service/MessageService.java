@@ -127,4 +127,11 @@ public class MessageService extends RootService {
                 .build();
     }
 
+    public Message getLastMessage(Long firstUser, Long secondUser) {
+        return messageRepository.findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderByCreatedAtAsc(
+                firstUser,
+                secondUser
+        );
+    }
+
 }
