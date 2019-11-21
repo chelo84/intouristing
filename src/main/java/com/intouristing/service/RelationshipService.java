@@ -9,6 +9,7 @@ import com.intouristing.model.key.RelationshipId;
 import com.intouristing.repository.RelationshipRepository;
 import com.intouristing.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,6 +38,7 @@ public class RelationshipService extends RootService {
     private final AccountService accountService;
     private final UserService userService;
 
+    @Autowired
     public RelationshipService(RelationshipRepository relationshipRepository,
                                ChatService chatService,
                                MessageService messageService,
@@ -95,7 +97,7 @@ public class RelationshipService extends RootService {
                         comparing(
                                 (friendDTO -> Optional.ofNullable(friendDTO)
                                         .map(FriendDTO::getLastMessage)
-                                        .map(MessageDTO::getCreatedAt)
+                                        .map(MessageDTO::getSentAt)
                                         .orElse(null)),
                                 nullsLast(Comparator.reverseOrder())
                         )

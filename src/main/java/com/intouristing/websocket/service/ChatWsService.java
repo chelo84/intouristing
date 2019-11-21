@@ -6,6 +6,7 @@ import com.intouristing.model.dto.mongo.ReadMessageUserDTO;
 import com.intouristing.model.dto.mongo.SendMessageDTO;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
+import com.intouristing.model.entity.mongo.MessageUser;
 import com.intouristing.repository.ChatGroupRepository;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.service.MessageService;
@@ -49,13 +50,21 @@ public class ChatWsService extends RootWsService {
         this.userRepository = userRepository;
     }
 
+    private List<User> getMessageUsers(Message message) {
+        return userRepository.findAllById(message.getSentTo()
+                .stream()
+                .map(MessageUser::getUserId)
+                .collect(Collectors.toList())
+        );
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public SendMessageDTO sendMessage(SendMessageDTO sendMessageDTO) {
         var message = messageService.createMessage(
                 sendMessageDTO,
                 accountWsService.getAccount().getId()
         );
-        var usersToNotificate = userRepository.findAllById(message.getSentTo());
+        var usersToNotificate = this.getMessageUsers(message);
 
         this.notificateUsers(
                 MESSAGE,
@@ -73,11 +82,11 @@ public class ChatWsService extends RootWsService {
                 accountWsService.getAccount()
         );
         var usersToNotificate = new HashSet<>(
-                userRepository.findAllById(message.getSentTo())
+                this.getMessageUsers(message)
         );
         CollectionUtils.addIgnoreNull(
                 usersToNotificate,
-                userRepository.findById(message.getSentBy()).orElse(null)
+                userRepository.findById(message.getSentBy().getUserId()).orElse(null)
         );
 
         var readMessageDTO = this.createReadMessageDTO(message);

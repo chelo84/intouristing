@@ -106,7 +106,7 @@ public class ChatService extends RootService {
                 PageRequest.of(
                         page,
                         size,
-                        Sort.by("createdAt")
+                        Sort.by("sentAt")
                 )
         );
     }
@@ -122,7 +122,7 @@ public class ChatService extends RootService {
                 PageRequest.of(
                         page,
                         size,
-                        Sort.by("createdAt")
+                        Sort.by("sentAt")
                 )
         );
     }

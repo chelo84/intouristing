@@ -7,12 +7,14 @@ import com.intouristing.model.entity.ChatGroup;
 import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.model.entity.User;
 import com.intouristing.model.entity.mongo.Message;
+import com.intouristing.model.entity.mongo.MessageUser;
 import com.intouristing.model.entity.mongo.ReadBy;
 import com.intouristing.repository.ChatGroupRepository;
+import com.intouristing.repository.UserRepository;
 import com.intouristing.repository.mongo.MessageRepository;
-import com.intouristing.service.account.AccountWsService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,15 +35,17 @@ public class MessageService extends RootService {
     private final ChatGroupRepository chatGroupRepository;
     private final ChatService chatService;
     private final MessageRepository messageRepository;
+    private final UserService userService;
 
     @Autowired
     public MessageService(ChatGroupRepository chatGroupRepository,
                           ChatService chatService,
                           MessageRepository messageRepository,
-                          AccountWsService accountWsService) {
+                          UserService userRepository1) {
         this.chatGroupRepository = chatGroupRepository;
         this.chatService = chatService;
         this.messageRepository = messageRepository;
+        this.userService = userRepository1;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -52,8 +56,8 @@ public class MessageService extends RootService {
                     .builder()
                     .text(sendMessageDTO.getText())
                     .chatGroup(sendMessageDTO.getChatGroup())
-                    .createdAt(LocalDateTime.now())
-                    .sentBy(sentBy)
+                    .sentAt(LocalDateTime.now())
+                    .sentBy(MessageUser.parseUser(userService.find(sentBy)))
                     .isGroup(true)
                     .build();
 
@@ -74,15 +78,21 @@ public class MessageService extends RootService {
             message.setSentTo(
                     usersToSendMessage.stream()
                             .filter(id -> !id.equals(sentBy))
+                            .map(userService::find)
+                            .map(MessageUser::parseUser)
                             .collect(Collectors.toList())
             );
         } else {
             message = Message
                     .builder()
                     .text(sendMessageDTO.getText())
-                    .sentBy(sentBy)
-                    .createdAt(LocalDateTime.now())
-                    .sentTo(Collections.singletonList(sendMessageDTO.getSendTo()))
+                    .sentBy(MessageUser.parseUser(userService.find(sentBy)))
+                    .sentAt(LocalDateTime.now())
+                    .sentTo(
+                            List.of(
+                                    MessageUser.parseUser(userService.find(sendMessageDTO.getSendTo()))
+                            )
+                    )
                     .isGroup(false)
                     .privateChat(
                             Optional.ofNullable(
@@ -128,9 +138,19 @@ public class MessageService extends RootService {
     }
 
     public Message getLastMessage(Long firstUser, Long secondUser) {
-        return messageRepository.findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderByCreatedAtAsc(
+        return messageRepository.findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderBySentAtAsc(
                 firstUser,
                 secondUser
+        );
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.NEVER)
+    public List<Message> findByPrivateChat(Long firstUser, Long secondUser, Pageable pageable) {
+        var privateChat = chatService.findPrivateChat(firstUser, secondUser);
+        return messageRepository.findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(
+                privateChat.getFirstUser(),
+                privateChat.getSecondUser(),
+                pageable
         );
     }
 

@@ -27,9 +27,9 @@ public class Message {
 
     private String text;
 
-    private Long sentBy;
+    private MessageUser sentBy;
 
-    private List<Long> sentTo;
+    private List<MessageUser> sentTo;
 
     private List<ReadBy> readBy;
 
@@ -37,7 +37,7 @@ public class Message {
 
     private Boolean isGroup;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime sentAt;
 
     private LocalDateTime updatedAt;
 

@@ -146,7 +146,7 @@ public class ChatServiceTest {
 
         assertNotNull(chatGroupMessages);
         assertEquals(5, chatGroupMessages.size());
-        assertTrue(chatGroupMessages.get(0).getCreatedAt().isBefore(chatGroupMessages.get(chatGroupMessages.size() - 1).getCreatedAt()));
+        assertTrue(chatGroupMessages.get(0).getSentAt().isBefore(chatGroupMessages.get(chatGroupMessages.size() - 1).getSentAt()));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class ChatServiceTest {
 
         assertNotNull(chatGroupMessages);
         assertEquals(5, chatGroupMessages.size());
-        assertTrue(chatGroupMessages.get(0).getCreatedAt().isBefore(chatGroupMessages.get(chatGroupMessages.size() - 1).getCreatedAt()));
+        assertTrue(chatGroupMessages.get(0).getSentAt().isBefore(chatGroupMessages.get(chatGroupMessages.size() - 1).getSentAt()));
     }
 
 }

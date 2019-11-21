@@ -26,9 +26,9 @@ public class MessageDTO {
 
     private String text;
 
-    private Long sentBy;
+    private MessageUserDTO sentBy;
 
-    private List<Long> sentTo;
+    private List<MessageUserDTO> sentTo;
 
     private List<ReadByDTO> readBy;
 
@@ -36,7 +36,7 @@ public class MessageDTO {
 
     private Boolean isGroup;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime sentAt;
 
     private LocalDateTime updatedAt;
 
@@ -48,8 +48,12 @@ public class MessageDTO {
                     .id(message.getId().toString())
                     .chatGroup(message.getChatGroup())
                     .text(message.getText())
-                    .sentBy(message.getSentBy())
-                    .sentTo(message.getSentTo())
+                    .sentBy(MessageUserDTO.parseDTO(message.getSentBy()))
+                    .sentTo(emptyIfNull(message.getSentTo())
+                            .stream()
+                            .map(MessageUserDTO::parseDTO)
+                            .collect(Collectors.toList())
+                    )
                     .readBy(emptyIfNull(message.getReadBy())
                             .stream()
                             .map(ReadByDTO::parseDTO)
@@ -57,7 +61,7 @@ public class MessageDTO {
                     )
                     .readByAll(message.getReadByAll())
                     .isGroup(message.getIsGroup())
-                    .createdAt(message.getCreatedAt())
+                    .sentAt(message.getSentAt())
                     .updatedAt(message.getUpdatedAt())
                     .excludedAt(message.getExcludedAt())
                     .build();
