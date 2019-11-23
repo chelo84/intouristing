@@ -73,6 +73,7 @@ public class ChatWsService extends RootWsService {
         );
 
         sendMessageDTO.setIsSent(true);
+        sendMessageDTO.setId(message.getId().toString());
         return sendMessageDTO;
     }
 

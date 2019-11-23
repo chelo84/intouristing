@@ -2,14 +2,13 @@ package com.intouristing.controller;
 
 import com.intouristing.model.dto.ChatGroupDTO;
 import com.intouristing.model.dto.mongo.MessageDTO;
+import com.intouristing.model.dto.mongo.MessagesDTO;
 import com.intouristing.model.entity.PrivateChat;
 import com.intouristing.service.ChatService;
 import com.intouristing.service.MessageService;
 import com.intouristing.service.account.AccountService;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/chat")
 public class ChatController {
 
-    private  AccountService accountService;
-    private  ChatService chatService;
-    private  MessageService messageService;
+    private AccountService accountService;
+    private ChatService chatService;
+    private MessageService messageService;
 
     @PostMapping("/group")
     public ChatGroupDTO createChatGroup(@RequestBody ChatGroupDTO chatGroupDTO) {
@@ -73,22 +72,26 @@ public class ChatController {
     }
 
     @GetMapping("/private/{firstUser}/{secondUser}/messages")
-    public List<MessageDTO> findPrivateChatMessages(@PathVariable Long firstUser,
-                                                    @PathVariable Long secondUser,
-                                                    @RequestParam(value = "page", defaultValue = "0") int page,
-                                                    @RequestParam(value = "limit", defaultValue = "20") int limit,
-                                                    @RequestParam(value = "order", defaultValue = "sentAt") String order,
-                                                    @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+    public MessagesDTO findPrivateChatMessages(@PathVariable Long firstUser,
+                                               @PathVariable Long secondUser,
+                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "limit", defaultValue = "20") int limit,
+                                               @RequestParam(value = "order", defaultValue = "sentAt") String order,
+                                               @RequestParam(value = "direction", defaultValue = "asc") String direction) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 limit,
                 Sort.by(Sort.Direction.fromString(direction), order)
         );
 
-        return messageService.findByPrivateChat(firstUser, secondUser, pageRequest)
+        var messageDTOs = messageService.findByPrivateChat(firstUser, secondUser, pageRequest)
                 .stream()
                 .map(MessageDTO::parseDTO)
                 .collect(Collectors.toList());
-    } 
+        return MessagesDTO.builder()
+                .messages(messageDTOs)
+                .limit(messageService.countByPrivateChat(firstUser, secondUser))
+                .build();
+    }
 
 }

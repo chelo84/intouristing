@@ -12,6 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 public class SendMessageDTO {
 
+    private String id;
+
     private String hash;
 
     private Long chatGroup;

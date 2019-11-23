@@ -10,8 +10,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.MESSAGE;
-import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.READ_MESSAGE;
+import static com.intouristing.websocket.messagemapping.MessageMappings.Chat.*;
 
 /**
  * Created by Marcelo Lacroix on 31/08/2019.
@@ -28,7 +27,7 @@ public class ChatWsController extends RootWsController {
     }
 
     @MessageMapping(MESSAGE)
-    @SendToUser(MESSAGE)
+    @SendToUser(QUEUE_MESSAGE)
     public SendMessageDTO sendMessage(@Payload SendMessageDTO sendMessageDTO) {
         sendMessageDTO = chatWsService.sendMessage(sendMessageDTO);
 

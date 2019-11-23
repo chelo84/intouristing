@@ -138,13 +138,13 @@ public class MessageService extends RootService {
     }
 
     public Message getLastMessage(Long firstUser, Long secondUser) {
-        return messageRepository.findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderBySentAtAsc(
+        return messageRepository.findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderBySentAtDesc(
                 firstUser,
                 secondUser
         );
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.NEVER)
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<Message> findByPrivateChat(Long firstUser, Long secondUser, Pageable pageable) {
         var privateChat = chatService.findPrivateChat(firstUser, secondUser);
         return messageRepository.findAllByPrivateChat_FirstUserAndPrivateChat_SecondUser(
@@ -152,6 +152,15 @@ public class MessageService extends RootService {
                 privateChat.getSecondUser(),
                 pageable
         );
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+    public Long countByPrivateChat(Long firstUser, Long secondUser) {
+        var privateChat = chatService.findPrivateChat(firstUser, secondUser);
+        return messageRepository.countByPrivateChat_FirstUserAndPrivateChat_SecondUser(
+                privateChat.getFirstUser(),
+                privateChat.getSecondUser()
+        ).orElse(0L);
     }
 
 }
