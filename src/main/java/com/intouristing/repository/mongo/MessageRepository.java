@@ -21,12 +21,32 @@ public interface MessageRepository extends MongoRepository<Message, ObjectId> {
             Pageable pageable
     );
 
+    List<Message> findAllBySentBy_UserIdNotAndPrivateChat_FirstUserAndPrivateChat_SecondUser(
+            Long currentUser,
+            Long firstUser,
+            Long secondUser
+    );
+
     Optional<Long> countByPrivateChat_FirstUserAndPrivateChat_SecondUser(
             Long firstUser,
             Long secondUser
     );
 
     Message findFirstByPrivateChat_FirstUserAndPrivateChat_SecondUserOrderBySentAtDesc(
+            Long firstUser,
+            Long secondUser
+    );
+
+    Optional<Long> countBySentBy_UserIdNotAndReadBy_UserIdIsNotInAndPrivateChat_firstUserAndPrivateChat_SecondUser(
+            Long currentUser1,
+            Long currentUser2,
+            Long firstUser,
+            Long secondUser
+    );
+
+    List<Message> findAllBySentBy_UserIdNotAndReadBy_UserIdIsNotInAndPrivateChat_firstUserAndPrivateChat_SecondUser(
+            Long currentUser1,
+            Long currentUser2,
             Long firstUser,
             Long secondUser
     );

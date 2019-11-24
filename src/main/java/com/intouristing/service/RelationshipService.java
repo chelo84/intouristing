@@ -1,5 +1,6 @@
 package com.intouristing.service;
 
+import com.intouristing.mapper.FriendMapper;
 import com.intouristing.model.dto.FriendDTO;
 import com.intouristing.model.dto.mongo.MessageDTO;
 import com.intouristing.model.entity.Relationship;
@@ -37,18 +38,20 @@ public class RelationshipService extends RootService {
     private final MessageService messageService;
     private final AccountService accountService;
     private final UserService userService;
+    private final FriendMapper friendMapper;
 
     @Autowired
     public RelationshipService(RelationshipRepository relationshipRepository,
                                ChatService chatService,
                                MessageService messageService,
                                AccountService accountService,
-                               UserService userService) {
+                               UserService userService, FriendMapper friendMapper) {
         this.relationshipRepository = relationshipRepository;
         this.chatService = chatService;
         this.messageService = messageService;
         this.accountService = accountService;
         this.userService = userService;
+        this.friendMapper = friendMapper;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -79,20 +82,7 @@ public class RelationshipService extends RootService {
         );
 
         var friendDTOs = relationships.stream()
-                .map(relationship -> {
-                    var lastMessage = messageService.getLastMessage(
-                            relationship.getFirstUser(),
-                            relationship.getSecondUser()
-                    );
-                    Long userId = Optional.of(relationship.getFirstUser())
-                            .filter(id -> !id.equals(accountService.getAccount().getId()))
-                            .orElseGet(relationship::getSecondUser);
-
-                    return FriendDTO.parseDTO(
-                            userService.find(userId),
-                            lastMessage
-                    );
-                })
+                .map(friendMapper::mapFriendDTO)
                 .sorted(
                         comparing(
                                 (friendDTO -> Optional.ofNullable(friendDTO)

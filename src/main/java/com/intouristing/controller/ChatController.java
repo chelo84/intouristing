@@ -77,11 +77,11 @@ public class ChatController {
                                                @RequestParam(value = "page", defaultValue = "0") int page,
                                                @RequestParam(value = "limit", defaultValue = "20") int limit,
                                                @RequestParam(value = "order", defaultValue = "sentAt") String order,
-                                               @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+                                               @RequestParam(value = "direction", defaultValue = "desc") String direction) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 limit,
-                Sort.by(Sort.Direction.fromString(direction), order)
+                Sort.by(Sort.Order.by(order).with(Sort.Direction.fromString(direction)).nullsLast())
         );
 
         var messageDTOs = messageService.findByPrivateChat(firstUser, secondUser, pageRequest)

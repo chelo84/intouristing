@@ -12,6 +12,7 @@ import com.intouristing.repository.ChatGroupRepository;
 import com.intouristing.repository.PrivateChatRepository;
 import com.intouristing.repository.UserRepository;
 import com.intouristing.repository.mongo.MessageRepository;
+import com.intouristing.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,16 +34,18 @@ public class ChatService extends RootService {
     private final PrivateChatRepository privateChatRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final AccountService accountService;
 
     @Autowired
     public ChatService(ChatGroupRepository chatGroupRepository,
                        PrivateChatRepository privateChatRepository,
                        UserRepository userRepository,
-                       MessageRepository messageRepository) {
+                       MessageRepository messageRepository, AccountService accountService) {
         this.chatGroupRepository = chatGroupRepository;
         this.privateChatRepository = privateChatRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.accountService = accountService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -125,6 +128,16 @@ public class ChatService extends RootService {
                         Sort.by("sentAt")
                 )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Long countUnreadMessagesByPrivateChat(Long firstUser, Long secondUser) {
+        return messageRepository.countBySentBy_UserIdNotAndReadBy_UserIdIsNotInAndPrivateChat_firstUserAndPrivateChat_SecondUser(
+                accountService.getAccount().getId(),
+                accountService.getAccount().getId(),
+                Math.min(firstUser, secondUser),
+                Math.max(firstUser, secondUser)
+        ).orElse(0L);
     }
 
 }
