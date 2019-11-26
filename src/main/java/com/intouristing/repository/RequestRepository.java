@@ -32,4 +32,16 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             "and request.acceptedAt is null " +
             "and request.declinedAt is null ")
     long countAllPendingByDestinationIdOrSenderId(Long userId);
+
+    @Query("select request from Request request " +
+    "where request.destination.id = ?1 " +
+    "and request.acceptedAt is null " +
+    "and request.declinedAt is null ")
+List<Request> findAllPendingByDestinationId(Long userId);
+
+@Query("select count(request.id) from Request request " +
+    "where request.destination.id = ?1 " +
+    "and request.acceptedAt is null " +
+    "and request.declinedAt is null ")
+long countAllPendingByDestinationId(Long userId);
 }

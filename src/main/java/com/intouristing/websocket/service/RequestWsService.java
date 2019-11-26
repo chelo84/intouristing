@@ -83,19 +83,21 @@ public class RequestWsService extends RootWsService {
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
-        request.setAcceptedAt(LocalDateTime.now());
-        requestRepository.save(request);
+        if(nonNull(request.getDeclinedAt()) && nonNull(request.getAcceptedAt())) {
+                request.setAcceptedAt(LocalDateTime.now());
+                requestRepository.save(request);
 
-        relationshipService.createFriendship(
-                request.getSender(),
-                request.getDestination()
-        );
+                relationshipService.createFriendship(
+                        request.getSender(),
+                        request.getDestination()
+                );
 
-        super.sendToAnotherUser(
-                REQUEST,
-                RequestDTO.parseDTO(request),
-                request.getSender().getUsername()
-        );
+                // super.sendToAnotherUser(
+                //         REQUEST,
+                //         RequestDTO.parseDTO(request),
+                //         request.getSender().getUsername()
+                // );
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -109,13 +111,16 @@ public class RequestWsService extends RootWsService {
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
-        request.setDeclinedAt(LocalDateTime.now());
-        requestRepository.save(request);
 
-        super.sendToAnotherUser(
-                REQUEST,
-                RequestDTO.parseDTO(request),
-                request.getSender().getUsername()
-        );
+        if(nonNull(request.getDeclinedAt()) && nonNull(request.getAcceptedAt())) {
+                request.setDeclinedAt(LocalDateTime.now());
+                requestRepository.save(request);
+
+                // super.sendToAnotherUser(
+                //         REQUEST,
+                //         RequestDTO.parseDTO(request),
+                //         request.getSender().getUsername()
+                // );
+        }
     }
 }
