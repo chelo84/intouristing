@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import static java.util.Objects.isNull;
 import java.util.function.Predicate;
 
 import static com.intouristing.websocket.messagemapping.MessageMappings.Request.REQUEST;
@@ -83,19 +84,21 @@ public class RequestWsService extends RootWsService {
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
-        request.setAcceptedAt(LocalDateTime.now());
-        requestRepository.save(request);
+        if(isNull(request.getDeclinedAt()) && isNull(request.getAcceptedAt())) {
+                request.setAcceptedAt(LocalDateTime.now());
+                requestRepository.save(request);
 
-        relationshipService.createFriendship(
-                request.getSender(),
-                request.getDestination()
-        );
+                relationshipService.createFriendship(
+                        request.getSender(),
+                        request.getDestination()
+                );
 
-        super.sendToAnotherUser(
-                REQUEST,
-                RequestDTO.parseDTO(request),
-                request.getSender().getUsername()
-        );
+                // super.sendToAnotherUser(
+                //         REQUEST,
+                //         RequestDTO.parseDTO(request),
+                //         request.getSender().getUsername()
+                // );
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -109,13 +112,16 @@ public class RequestWsService extends RootWsService {
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
-        request.setDeclinedAt(LocalDateTime.now());
-        requestRepository.save(request);
 
-        super.sendToAnotherUser(
-                REQUEST,
-                RequestDTO.parseDTO(request),
-                request.getSender().getUsername()
-        );
+        if(isNull(request.getDeclinedAt()) && isNull(request.getAcceptedAt())) {
+                request.setDeclinedAt(LocalDateTime.now());
+                requestRepository.save(request);
+
+                // super.sendToAnotherUser(
+                //         REQUEST,
+                //         RequestDTO.parseDTO(request),
+                //         request.getSender().getUsername()
+                // );
+        }
     }
 }

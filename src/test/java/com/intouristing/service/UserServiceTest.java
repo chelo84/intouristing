@@ -82,7 +82,7 @@ public class UserServiceTest {
         );
         user = userService.setAvatarImage(user.getId(), mockMultipartFile);
 
-        userService.getAvatarImage(user.getId());
+        userService.getAvatarImage(user.getId().toString());
     }
 
 }

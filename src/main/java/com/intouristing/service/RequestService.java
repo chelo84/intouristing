@@ -25,14 +25,14 @@ public class RequestService extends RootService {
 
     @Transactional(readOnly = true, propagation = Propagation.NEVER)
     public List<Request> findAll() {
-        return requestRepository.findAllPendingByDestinationIdOrSenderId(
+        return requestRepository.findAllPendingByDestinationId(
                 accountService.getAccount().getId()
         );
     }
 
     @Transactional(readOnly = true, propagation = Propagation.NEVER)
     public long countAll() {
-        return requestRepository.countAllPendingByDestinationIdOrSenderId(
+        return requestRepository.countAllPendingByDestinationId(
                 accountService.getAccount().getId()
         );
     }
