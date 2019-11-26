@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import static java.util.Objects.isNull;
 import java.util.function.Predicate;
 
 import static com.intouristing.websocket.messagemapping.MessageMappings.Request.REQUEST;
@@ -83,7 +84,7 @@ public class RequestWsService extends RootWsService {
                 .orElseThrow(RequestNotAcceptableException::new);
 
         Request request = optRequest.get();
-        if(nonNull(request.getDeclinedAt()) && nonNull(request.getAcceptedAt())) {
+        if(isNull(request.getDeclinedAt()) && isNull(request.getAcceptedAt())) {
                 request.setAcceptedAt(LocalDateTime.now());
                 requestRepository.save(request);
 
@@ -112,7 +113,7 @@ public class RequestWsService extends RootWsService {
 
         Request request = optRequest.get();
 
-        if(nonNull(request.getDeclinedAt()) && nonNull(request.getAcceptedAt())) {
+        if(isNull(request.getDeclinedAt()) && isNull(request.getAcceptedAt())) {
                 request.setDeclinedAt(LocalDateTime.now());
                 requestRepository.save(request);
 
