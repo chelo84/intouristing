@@ -64,12 +64,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/avatar/{id}")
-    public ResponseEntity<?> getAvatar(@PathVariable Long id, HttpServletResponse response) {
+    @GetMapping("/avatar/{user}")
+    public ResponseEntity<?> getAvatar(@PathVariable String user, HttpServletResponse response) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION)
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(userService.getAvatarImage(id));
+                .body(userService.getAvatarImage(user));
     }
 
     @GetMapping("/token/update")

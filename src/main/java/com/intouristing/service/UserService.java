@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Created by Marcelo Lacroix on 10/08/2019.
@@ -94,9 +95,17 @@ public class UserService extends RootService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.NEVER)
-    public byte[] getAvatarImage(Long id) {
-        return userRepository.findById(id)
-                .map(User::getAvatarImage)
+    public byte[] getAvatarImage(String user) {
+        Optional<User> u = Optional.empty();
+        try {
+            u = userRepository.findById(Long.parseLong(user));
+        } catch (NumberFormatException ignore) { }
+
+        if(u.isEmpty()) {
+             u = userRepository.findByUsername(user);
+        }
+
+        return u.map(User::getAvatarImage)
                 .orElse(null);
     }
 
